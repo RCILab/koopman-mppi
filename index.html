@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en" data-template-name="RCI_paper_page_template" data-template-version="1.0.0">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- =========================================================
+       RCI Template Runtime Config
+       - Central manager and render.js should use this block
+       - Content is loaded from static/data/content.json and lab.json
+       ========================================================= -->
+  <script>
+    window.RCI_TEMPLATE_CONFIG = {
+      templateName: "RCI_paper_page_template",
+      templateVersion: "1.0.0",
+      contentPath: "static/data/content.json",
+      labPath: "static/data/lab.json"
+    };
+  </script>
+
+  <!-- =========================================================
+       Runtime Metadata Block
+       - Managed by static/js/render.js
+       - Keep these tags grouped for easier maintenance
+       - Dynamic repeated tags (citation_author, article:tag, etc.)
+         should be injected by render.js
+       ========================================================= -->
+
+  <!-- Primary Meta Tags -->
+  <!-- TODO: Replace with your paper title and author names -->
+  <title id="meta-title">Academic Project Page | RCILab</title>
+  <meta id="meta-name-title" name="title" content="PAPER_TITLE - AUTHOR_NAMES">
+  <!-- TODO: Write a compelling 150-160 character description of your research -->
+  <meta id="meta-description" name="description" content="BRIEF_DESCRIPTION_OF_YOUR_RESEARCH_CONTRIBUTION_AND_FINDINGS">
+  <!-- TODO: Add 5-10 relevant keywords for your research area -->
+  <meta id="meta-keywords" name="keywords" content="KEYWORD1, KEYWORD2, KEYWORD3, machine learning, computer vision, AI">
+  <!-- TODO: List all authors -->
+  <meta id="meta-author" name="author" content="FIRST_AUTHOR_NAME, SECOND_AUTHOR_NAME">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  <meta name="rci-template-version" content="1.0.0">
+  <meta name="rci-template-managed" content="true">
+
+  <!-- Open Graph / Facebook -->
+  <!-- TODO: Replace with your institution or lab name -->
+  <meta id="meta-og-site-name" property="og:site_name" content="INSTITUTION_OR_LAB_NAME">
+  <meta property="og:type" content="article">
+  <!-- TODO: Same as paper title above -->
+  <meta id="meta-og-title" property="og:title" content="PAPER_TITLE">
+  <!-- TODO: Same as description above -->
+  <meta id="meta-og-description" property="og:description" content="BRIEF_DESCRIPTION_OF_YOUR_RESEARCH_CONTRIBUTION_AND_FINDINGS">
+  <!-- TODO: Replace with your actual website URL -->
+  <meta id="meta-og-url" property="og:url" content="">
+  <!-- TODO: Create a 1200x630px preview image and update path -->
+  <meta id="meta-og-image" property="og:image" content="">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta id="meta-og-image-alt" property="og:image:alt" content="PAPER_TITLE - Research Preview">
+  <meta id="meta-article-published-time" property="article:published_time" content="2024-01-01T00:00:00.000Z">
+  <meta id="meta-article-section" property="article:section" content="Research">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- TODO: Replace with your lab/institution Twitter handle -->
+  <meta id="meta-twitter-site" name="twitter:site" content="@YOUR_TWITTER_HANDLE">
+  <!-- TODO: Replace with first author's Twitter handle -->
+  <meta id="meta-twitter-creator" name="twitter:creator" content="@AUTHOR_TWITTER_HANDLE">
+  <!-- TODO: Same as paper title above -->
+  <meta id="meta-twitter-title" name="twitter:title" content="PAPER_TITLE">
+  <!-- TODO: Same as description above -->
+  <meta id="meta-twitter-description" name="twitter:description" content="BRIEF_DESCRIPTION_OF_YOUR_RESEARCH_CONTRIBUTION_AND_FINDINGS">
+  <!-- TODO: Same as social preview image above -->
+  <meta id="meta-twitter-image" name="twitter:image" content="">
+  <meta id="meta-twitter-image-alt" name="twitter:image:alt" content="PAPER_TITLE - Research Preview">
+
+  <!-- Academic/Research Specific -->
+  <meta id="meta-citation-title" name="citation_title" content="PAPER_TITLE">
+  <meta id="meta-citation-publication-date" name="citation_publication_date" content="2024">
+  <meta id="meta-citation-conference-title" name="citation_conference_title" content="CONFERENCE_NAME">
+  <meta id="meta-citation-pdf-url" name="citation_pdf_url" content="">
+  <!-- TODO: citation_author tags will be injected dynamically by render.js -->
+
+  <!-- Additional SEO -->
+  <meta name="theme-color" content="#2563eb">
+  <meta name="msapplication-TileColor" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ajax.googleapis.com">
+  <link rel="preconnect" href="https://documentcloud.adobe.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <!-- Favicon and App Icons -->
+  <link rel="icon" type="image/x-icon" href="static/images/icon/RCI_LAB_LOGO.ico">
+  <link rel="apple-touch-icon" href="static/images/icon/RCI_LAB_LOGO.ico">
+
+  <!-- Critical CSS - Load synchronously -->
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <!-- Non-critical CSS - Load asynchronously -->
+  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+  <!-- Fallback for browsers that don't support preload -->
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+
+  <!-- Fonts - Optimized loading -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Defer non-critical JavaScript -->
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+
+  <!-- Existing template behavior -->
+  <script defer src="static/js/index.js"></script>
+
+  <!-- New runtime/data layer -->
+  <script defer src="static/js/content-schema.js"></script>
+  <script defer src="static/js/render.js"></script>
+
+  <!-- Structured Data for Academic Papers -->
+  <!-- TODO: Managed by render.js -->
+  <script id="structured-data-scholar" type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "PAPER_TITLE",
+    "description": "BRIEF_DESCRIPTION_OF_YOUR_RESEARCH_CONTRIBUTION_AND_FINDINGS",
+    "author": [],
+    "datePublished": "2024-01-01",
+    "publisher": {
+      "@type": "Organization",
+      "name": "CONFERENCE_OR_JOURNAL_NAME"
+    },
+    "url": "",
+    "image": "",
+    "keywords": [],
+    "abstract": "FULL_ABSTRACT_TEXT_HERE",
+    "citation": "BIBTEX_CITATION_HERE",
+    "isAccessibleForFree": true,
+    "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "mainEntity": {
+      "@type": "WebPage",
+      "@id": ""
+    },
+    "about": []
+  }
+  </script>
+
+  <!-- Website/Organization Structured Data -->
+  <!-- TODO: Managed by render.js -->
+  <script id="structured-data-org" type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "INSTITUTION_OR_LAB_NAME",
+    "url": "",
+    "logo": "",
+    "sameAs": []
+  }
+  </script>
+</head>
+<body data-template-version="1.0.0">
+
+  <noscript>
+    <section class="section">
+      <div class="container is-max-desktop">
+        <div class="notification is-warning">
+          This project page uses JavaScript to render paper content from <code>static/data/content.json</code> and <code>static/data/lab.json</code>.
+        </div>
+      </div>
+    </section>
+  </noscript>
+
+  <!-- Scroll to Top Button -->
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <!-- More Works Dropdown -->
+  <!-- TODO: Lab-wide related works are managed via static/data/lab.json -->
+  <div id="more-works-container" class="more-works-container" data-section="moreWorks" hidden>
+    <button class="more-works-btn" onclick="toggleMoreWorks()" title="View More Works from Our Lab">
+      <i class="fas fa-flask"></i>
+      More Works
+      <i class="fas fa-chevron-down dropdown-arrow"></i>
+    </button>
+    <div class="more-works-dropdown" id="moreWorksDropdown">
+      <div class="dropdown-header">
+        <h4 id="more-works-title">More Works from Our Lab</h4>
+        <button class="close-btn" onclick="toggleMoreWorks()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div id="works-list" class="works-list" data-list="lab.moreWorks"></div>
+    </div>
+  </div>
+
+  <main id="main-content">
+
+    <!-- Hero -->
+    <section class="hero" id="section-hero" data-section="hero" data-bg-mode="custom" data-bg-value="linear-gradient(to bottom, var(--background-highlight) 0%, #dbeafe 60%, #f7fbff 90%, #ffffff 100%)">
+      <div class="hero-body">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered">
+            <div class="column has-text-centered">
+
+              <!-- TODO: Replace with your paper title -->
+              <h1 id="paper-title"
+                  class="title is-1 publication-title"
+                  data-field="paper.title"
+                  data-editable="text">
+                Academic Project Page
+              </h1>
+
+              <div id="publication-authors"
+                   class="is-size-5 publication-authors"
+                   data-list="paper.authors">
+                <!-- TODO: Replace with your paper authors and their personal links -->
+              </div>
+
+              <div class="is-size-5 publication-authors">
+                <!-- TODO: Replace with your institution and conference/journal info -->
+                <span id="publication-venue"
+                      class="author-block"
+                      data-field="paper.venueText"
+                      data-editable="text">
+                  Institution Name<br>Conference name and year
+                </span>
+
+                <!-- TODO: Remove this line if no equal contribution or corresponding author -->
+                <span id="contribution-note"
+                      class="eql-cntrb"
+                      data-field="paper.contributionNote"
+                      data-editable="text"
+                      hidden>
+                </span>
+              </div>
+
+              <div class="column has-text-centered">
+                <div id="publication-links"
+                     class="publication-links"
+                     data-list="paper.links">
+                  <!-- TODO: Buttons such as Paper / YouTube / Code / arXiv are rendered here -->
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End Hero -->
+
+    <!-- Teaser video / image -->
+   <section class="hero teaser" id="section-teaser" data-section="teaser" data-bg-mode="fixed" data-bg-value="white" hidden>
+      <div class="container is-max-desktop">
+        <div class="hero-body" style="text-align: center;">
+
+          <!-- TODO: Replace with your teaser video -->
+          <div id="teaser-video-wrapper" hidden>
+            <video poster=""
+                   id="teaser-video"
+                   autoplay
+                   controls
+                   muted
+                   loop
+                   height="100%"
+                   preload="metadata"
+                   data-field="paper.teaser.video">
+              <!-- TODO: Add your video file path here -->
+              <source id="teaser-video-source" src="" type="video/mp4">
+            </video>
+          </div>
+
+          <!-- If you want to put a teaser image instead of video, keep this image block. -->
+          <div id="teaser-image-wrapper" hidden>
+            <img id="teaser-image"
+                 src="static/images/figures/placeholder.png"
+                 alt="Teaser image"
+                 data-field="paper.teaser.image"
+                 data-asset-kind="image"
+                 style="width: 100%; max-width: 1000px; display: block; margin: 0 auto; border-radius: 6px;">
+          </div>
+
+          <!-- TODO: Replace with your video(or img) description -->
+          <h2 id="teaser-caption"
+              class="subtitle has-text-centered"
+              data-field="paper.teaser.caption"
+              data-editable="text"
+              style="margin-top: 1.5rem; font-size: 0.95rem; line-height: 1.5;">
+            Put video(or img) description here!
+          </h2>
+        </div>
+      </div>
+    </section>
+    <!-- End teaser video / image -->
+
+    <!-- Paper abstract -->
+    <section class="section hero" id="section-abstract" data-section="abstract" data-bg-mode="auto">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-four-fifths">
+            <h2 id="abstract-title" class="title is-3" hidden>Abstract</h2>
+            <div class="content has-text-justified">
+              <!-- TODO: Replace with your paper abstract -->
+              <p id="paper-abstract"
+                 data-field="paper.abstract.text"
+                 data-editable="textarea">
+                This is a placeholder abstract for the RCILab paper page template. Replace this text with the actual abstract of your paper.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End paper abstract -->
+
+    <!-- Image carousel -->
+    <section class="hero is-small" id="section-image-carousel" data-section="imageCarousel" data-bg-mode="auto" hidden>
+      <div class="hero-body">
+        <div class="container">
+          <h2 id="image-carousel-title" class="title is-3 has-text-centered" hidden></h2>
+          <div id="results-carousel" class="carousel results-carousel" data-list="paper.figureCarousel.items">
+            <!-- TODO: Replace with your research result images -->
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End image carousel -->
+
+    <!-- Youtube video -->
+     <section class="hero is-small" id="section-youtube" data-section="youtube" data-bg-mode="auto" hidden>
+      <div class="hero-body">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered">
+            <div class="column is-four-fifths has-text-centered">
+              <h2 class="title is-3" id="youtube-section-title" hidden></h2>
+
+              <div style="max-width: 960px; margin: 0 auto;">
+                <div class="publication-video">
+                  <iframe id="youtube-embed"
+                          src=""
+                          data-field="paper.youtube.embedUrl"
+                          frameborder="0"
+                          allow="autoplay; encrypted-media"
+                          allowfullscreen>
+                  </iframe>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End youtube video -->
+
+    <!-- Video carousel -->
+    <section class="hero is-small" id="section-video-carousel" data-section="videoCarousel" data-bg-mode="auto" hidden>
+      <div class="hero-body">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered">
+            <div class="column is-four-fifths has-text-centered">
+              <h2 id="video-carousel-title" class="title is-3" hidden></h2>
+
+              <div style="max-width: 960px; margin: 0 auto;">
+                <div id="video-carousel" class="carousel results-carousel" data-list="paper.videoCarousel.items">
+                  <!-- TODO: Replace with your carousel videos -->
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End video carousel -->
+
+    <!-- Paper poster -->
+    <section class="hero is-small" id="section-poster" data-section="poster" data-bg-mode="auto" hidden>
+      <div class="hero-body">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered">
+            <div class="column is-four-fifths has-text-centered">
+              <h2 class="title is-3" id="poster-title" hidden></h2>
+
+              <!-- TODO: Replace with your poster PDF -->
+              <div style="text-align: center;">
+                <iframe id="poster-iframe"
+                        src=""
+                        data-field="paper.poster.pdf"
+                        style="width: 100%; max-width: 900px; aspect-ratio: 210 / 260; border: none; display: block; margin: 0 auto;">
+                </iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End paper poster -->
+
+    <!-- BibTex citation -->
+    <section class="section" id="BibTeX" data-section="bibtex" data-bg-mode="auto">
+      <div class="container is-max-desktop content">
+        <div class="bibtex-header">
+          <h2 id="bibtex-title" class="title" hidden>BibTeX</h2>
+          <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+            <i class="fas fa-copy"></i>
+            <span class="copy-text">Copy</span>
+          </button>
+        </div>
+        <pre id="bibtex-code"
+             data-field="paper.bibtex.content"
+             data-editable="textarea"><code>@article{YourPaperKey2024,
+  title={Your Paper Title Here},
+  author={First Author and Second Author and Third Author},
+  journal={Conference/Journal Name},
+  year={2024},
+  url={https://your-domain.com/your-project-page}
+}</code></pre>
+      </div>
+    </section>
+    <!-- End BibTex citation -->
+
+
+    <!-- People -->
+    <section class="section hero" id="section-people" data-section="people" data-bg-mode="auto" hidden>
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column is-four-fifths has-text-centered">
+            <h2 id="people-title" class="title is-3" hidden></h2>
+
+            <!-- 4명 이하 -->
+            <div id="people-grid"
+                class="columns is-centered is-multiline is-variable is-6"
+                hidden>
+            </div>
+
+            <!-- 5명 이상 -->
+            <div id="people-carousel-wrapper" class="people-carousel-wrapper" hidden>
+              <button id="people-prev" class="slider-navigation-previous is-hidden" type="button" aria-label="Previous people">
+                &#10094;
+              </button>
+
+              <div class="people-carousel-viewport">
+                <div id="people-track" class="people-carousel-track"></div>
+              </div>
+
+              <button id="people-next" class="slider-navigation-next is-hidden" type="button" aria-label="Next people">
+                &#10095;
+              </button>
+            </div>
+
+            <div id="people-pagination" class="people-pagination slider-pagination" hidden></div>
+          </div> 
+        </div>
+      </div>
+    </section>
+    <!-- End People -->
+
+
+  </main>
+
+  <!-- =========================================================
+       Templates for runtime rendering
+       - Central manager can also use these field/list bindings
+       ========================================================= -->
+
+  <template id="author-template">
+    <span class="author-block">
+      <a class="author-link" href="#" target="_blank" rel="noopener"></a><sup class="author-mark" hidden></sup><span class="author-comma">,</span>
+    </span>
+  </template>
+
+  <template id="link-button-template">
+    <span class="link-block">
+      <a href="#"
+         target="_blank"
+         class="external-link button is-normal is-rounded is-dark"
+         rel="noopener">
+        <span class="icon"></span>
+        <span class="button-text"></span>
+      </a>
+    </span>
+  </template>
+
+  <template id="work-item-template">
+    <a href="#"
+       class="work-item"
+       target="_blank"
+       rel="noopener">
+      <div class="work-info">
+        <h5 class="work-title">Paper Title</h5>
+        <p class="work-description">Brief description of the work and its main contribution.</p>
+        <span class="work-venue">Conference/Journal 2024</span>
+      </div>
+      <i class="fas fa-external-link-alt"></i>
+    </a>
+  </template>
+
+  <template id="figure-carousel-item-template">
+    <div class="item">
+      <img class="carousel-image"
+           src="static/images/figures/placeholder.png"
+           alt="Research result visualization"
+           loading="lazy">
+      <h2 class="subtitle has-text-centered carousel-caption">Figure description.</h2>
+    </div>
+  </template>
+
+  <template id="video-carousel-item-template">
+    <div class="item">
+      <video class="carousel-video"
+             poster=""
+             controls
+             muted
+             loop
+             height="100%"
+             preload="metadata"
+             style="display: block; margin: 0 auto;">
+        <source class="carousel-video-source" src="" type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered carousel-video-caption" hidden></h2>
+    </div>
+  </template>
+
+  <template id="person-template">
+    <div class="column is-one-quarter">
+      <div class="people-grid-card has-text-centered">
+        <a class="person-image-link" href="#" target="_blank" rel="noopener">
+          <img class="person-image"
+              src="static/images/people/placeholder.png"
+              alt="Person"
+              style="width: 100%; max-width: 220px; aspect-ratio: 3 / 4; object-fit: cover; margin: 0 auto; display: block;">
+        </a>
+        <p style="margin-top: 12px;">
+          <a class="person-link" href="#" target="_blank" rel="noopener">Person Name</a>
+        </p>
+      </div>
+    </div>
+  </template>
+
+  <template id="person-carousel-card-template">
+    <div class="people-card has-text-centered">
+      <a class="person-image-link" href="#" target="_blank" rel="noopener">
+        <img class="person-image"
+            src="static/images/people/placeholder.png"
+            alt="Person">
+      </a>
+      <p class="people-card-name">
+        <a class="person-link" href="#" target="_blank" rel="noopener">Person Name</a>
+      </p>
+    </div>
+  </template>
+
+  <footer class="footer" data-bg-mode="auto">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This page was built using the
+              <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank" rel="noopener">
+                Academic Project Page Template
+              </a>
+              which was adopted from the
+              <a href="https://nerfies.github.io" target="_blank" rel="noopener">Nerfies</a>
+              project page. You are free to borrow the source code of this website, we just ask that you link back to the original template in the footer.
+              <br><br>
+              This RCILab template adapts the original template for reusable lab-wide paper pages.
+              <br><br>
+              This website template is licensed under a
+              <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+                Creative Commons Attribution-ShareAlike 4.0 International License
+              </a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Statcounter tracking code -->
+  <!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+  <!-- End of Statcounter Code -->
+
+</body>
+</html>

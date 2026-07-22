@@ -1,0 +1,235 @@
+{
+  "templateVersion": "1.0.0",
+  "language": "en",
+  "slug": "sample-project",
+  "pageUrl": "",
+  "repoUrl": "",
+
+  
+  "sections": {
+    "hero": true,
+    "moreWorks": false,
+    "teaser": true,
+    "abstract": true,
+    "imageCarousel": true,
+    "youtube": true,
+    "videoCarousel": true,
+    "poster": true,
+    "bibtex": true,
+    "people": true
+  },
+
+  
+  "meta": {
+    "title": "PAPER_TITLE",
+    "description": "BRIEF_DESCRIPTION_OF_YOUR_RESEARCH_CONTRIBUTION_AND_FINDINGS",
+    "keywords": [
+      "KEYWORD1",
+      "KEYWORD2",
+      "KEYWORD3",
+      "machine learning",
+      "computer vision",
+      "AI"
+    ],
+
+    
+    "publishedTime": "2024-01-01T00:00:00.000Z",
+    "publicationYear": "2024",
+    "conferenceName": "CONFERENCE_NAME",
+    "twitterSite": "@YOUR_TWITTER_HANDLE",
+    "twitterCreator": "@AUTHOR_TWITTER_HANDLE",
+    "socialPreviewImage": "static/images/figures/social_preview.png",
+    "themeColor": "#2563eb",
+    "researchAreas": [
+      "RESEARCH_AREA_1",
+      "RESEARCH_AREA_2"
+    ]
+  },
+
+  
+  "paper": {
+    
+    "title": "Academic Project Page",
+    "venueText": "Institution Name<br>Conference name and year",
+    "contributionNote": "<small><br><sup>*</sup>Indicates Equal Contribution, </small><small><sup>†</sup>Corresponding Author</small>",
+
+  
+    "links": [
+      {
+        "label": "Paper",
+        "url": "static/pdfs/sample.pdf",
+        "iconType": "pdf"
+      },
+      {
+        "label": "YouTube",
+        "url": "https://www.youtube.com/",
+        "iconType": "youtube"
+      },
+      {
+        "label": "Code",
+        "url": "https://github.com/YOUR_REPO_HERE",
+        "iconType": "github"
+      },
+      {
+        "label": "arXiv",
+        "url": "https://arxiv.org/abs/<ARXIV PAPER ID>",
+        "iconType": "arxiv"
+      }
+    ],
+    
+    
+    "abstract": {
+      "title": "Abstract",
+      "text": "Put abstract here!"
+    },
+    
+    
+    "authors": [
+      {
+        "name": "First Author",
+        "url": "FIRST AUTHOR PERSONAL LINK",
+        "mark": "*",
+        "citation": {
+          "first": "First",
+          "last": "Author"
+        },
+        "affiliation": "Institution Name"
+      },
+      {
+        "name": "Second Author",
+        "url": "SECOND AUTHOR PERSONAL LINK",
+        "mark": "*",
+        "citation": {
+          "first": "Second",
+          "last": "Author"
+        },
+        "affiliation": "Institution Name"
+      },
+      {
+        "name": "Third Author",
+        "url": "THIRD AUTHOR PERSONAL LINK",
+        "mark": "",
+        "citation": {
+          "first": "Third",
+          "last": "Author"
+        },
+        "affiliation": "Institution Name"
+      }
+    ],
+
+    
+    "teaser": {
+      "mode": "image",
+      "image": "static/images/figures/teaser.png",
+      "video": "static/videos/banner_video.mp4",
+      "caption": "Put video(or img) description here!"
+    },
+
+    
+    "figureCarousel": {
+      "title": "Image(figure) Carousel",
+      "items": [
+        {
+          "image": "static/images/figures/carousel1.jpg",
+          "alt": "First research result visualization",
+          "caption": "First image description."
+        },
+        {
+          "image": "static/images/figures/carousel2.jpg",
+          "alt": "Second research result visualization",
+          "caption": "Second image description."
+        },
+        {
+          "image": "static/images/figures/carousel3.jpg",
+          "alt": "Third research result visualization",
+          "caption": "Third image description."
+        },
+        {
+          "image": "static/images/figures/carousel4.jpg",
+          "alt": "Fourth research result visualization",
+          "caption": "Fourth image description."
+        }
+      ]
+    },
+
+    
+    "youtube": {
+      "title": "Video Presentation(Youtube)",
+      "embedUrl": "https://www.youtube.com/embed/JkaxUblCGz0"
+    },
+
+    
+    "videoCarousel": {
+      "title": "Another Video Carousel",
+      "items": [
+        {
+          "video": "static/videos/carousel1.mp4",
+          "caption": ""
+        },
+        {
+          "video": "static/videos/carousel2.mp4",
+          "caption": ""
+        },
+        {
+          "video": "static/videos/carousel3.mp4",
+          "caption": ""
+        }
+      ]
+    },
+
+    
+    "poster": {
+      "title": "Poster",
+      "pdf": "static/pdfs/sample.pdf#page=1"
+    },
+
+    
+    "bibtex": {
+      "title": "BibTeX",
+      "content": "@article{YourPaperKey2024,\n  title={Your Paper Title Here},\n  author={First Author and Second Author and Third Author},\n  journal={Conference/Journal Name},\n  year={2024},\n  url={https://your-domain.com/your-project-page}\n}"
+    },
+    
+    "people": {
+      "title": "People",
+      "items": [
+        {
+          "name": "People1",
+          "url": "FIRST AUTHOR PERSONAL LINK",
+          "image": "static/images/people/placeholder.png",
+          "alt": "People1"
+        },
+        {
+          "name": "People2",
+          "url": "SECOND AUTHOR PERSONAL LINK",
+          "image": "static/images/people/placeholder.png",
+          "alt": "People2"
+        },
+        {
+          "name": "People3",
+          "url": "THIRD AUTHOR PERSONAL LINK",
+          "image": "static/images/people/placeholder.png",
+          "alt": "People3"
+        },
+        {
+          "name": "People4",
+          "url": "THIRD AUTHOR PERSONAL LINK",
+          "image": "static/images/people/placeholder.png",
+          "alt": "People4"
+        },
+        {
+          "name": "People5",
+          "url": "THIRD AUTHOR PERSONAL LINK",
+          "image": "static/images/people/placeholder.png",
+          "alt": "People5"
+        }
+        ,
+        {
+          "name": "People6",
+          "url": "THIRD AUTHOR PERSONAL LINK",
+          "image": "static/images/people/placeholder.png",
+          "alt": "People6"
+        }
+      ]
+    }
+  }
+}

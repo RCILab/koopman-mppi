@@ -1,603 +1,375 @@
 <!DOCTYPE html>
-<html lang="en" data-template-name="RCI_paper_page_template" data-template-version="1.0.0">
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linear or Bilinear: A Criterion for Koopman Rollouts in Sampling-Based Predictive Control</title>
+<meta name="description" content="A system-level criterion for when a Koopman-MPPI rollout must be bilinear rather than linear. Bilinear Koopman MPPI tracks with near-oracle accuracy where the linear rollout fails structurally, at the same matrix-vector cost.">
+<meta name="keywords" content="MPPI, Koopman operator, bilinear systems, sampling-based MPC, model predictive path integral, robot learning">
+<meta name="author" content="Kangmin Lee, Sanghyun Kim">
 
-  <!-- =========================================================
-       RCI Template Runtime Config
-       - Central manager and render.js should use this block
-       - Content is loaded from static/data/content.json and lab.json
-       ========================================================= -->
-  <script>
-    window.RCI_TEMPLATE_CONFIG = {
-      templateName: "RCI_paper_page_template",
-      templateVersion: "1.0.0",
-      contentPath: "static/data/content.json",
-      labPath: "static/data/lab.json"
-    };
-  </script>
+<!-- Open Graph / social -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Linear or Bilinear: A Criterion for Koopman Rollouts in Sampling-Based Predictive Control">
+<meta property="og:description" content="When must a Koopman-MPPI rollout be bilinear rather than linear? A criterion, and a controller built around it.">
+<meta property="og:url" content="https://rcilab.github.io/koopman-mppi">
+<meta property="og:image" content="static/images/figures/social_preview.png">
+<meta name="twitter:card" content="summary_large_image">
 
-  <!-- =========================================================
-       Runtime Metadata Block
-       - Managed by static/js/render.js
-       - Keep these tags grouped for easier maintenance
-       - Dynamic repeated tags (citation_author, article:tag, etc.)
-         should be injected by render.js
-       ========================================================= -->
+<link rel="icon" href="static/images/icon/RCI_LAB_LOGO.ico">
+<link rel="stylesheet" href="static/css/site.css">
 
-  <!-- Primary Meta Tags -->
-  <!-- TODO: Replace with your paper title and author names -->
-  <title id="meta-title">Academic Project Page | RCILab</title>
-  <meta id="meta-name-title" name="title" content="PAPER_TITLE - AUTHOR_NAMES">
-  <!-- TODO: Write a compelling 150-160 character description of your research -->
-  <meta id="meta-description" name="description" content="BRIEF_DESCRIPTION_OF_YOUR_RESEARCH_CONTRIBUTION_AND_FINDINGS">
-  <!-- TODO: Add 5-10 relevant keywords for your research area -->
-  <meta id="meta-keywords" name="keywords" content="KEYWORD1, KEYWORD2, KEYWORD3, machine learning, computer vision, AI">
-  <!-- TODO: List all authors -->
-  <meta id="meta-author" name="author" content="FIRST_AUTHOR_NAME, SECOND_AUTHOR_NAME">
-  <meta name="robots" content="index, follow">
-  <meta name="language" content="English">
-  <meta name="rci-template-version" content="1.0.0">
-  <meta name="rci-template-managed" content="true">
-
-  <!-- Open Graph / Facebook -->
-  <!-- TODO: Replace with your institution or lab name -->
-  <meta id="meta-og-site-name" property="og:site_name" content="INSTITUTION_OR_LAB_NAME">
-  <meta property="og:type" content="article">
-  <!-- TODO: Same as paper title above -->
-  <meta id="meta-og-title" property="og:title" content="PAPER_TITLE">
-  <!-- TODO: Same as description above -->
-  <meta id="meta-og-description" property="og:description" content="BRIEF_DESCRIPTION_OF_YOUR_RESEARCH_CONTRIBUTION_AND_FINDINGS">
-  <!-- TODO: Replace with your actual website URL -->
-  <meta id="meta-og-url" property="og:url" content="">
-  <!-- TODO: Create a 1200x630px preview image and update path -->
-  <meta id="meta-og-image" property="og:image" content="">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta id="meta-og-image-alt" property="og:image:alt" content="PAPER_TITLE - Research Preview">
-  <meta id="meta-article-published-time" property="article:published_time" content="2024-01-01T00:00:00.000Z">
-  <meta id="meta-article-section" property="article:section" content="Research">
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image">
-  <!-- TODO: Replace with your lab/institution Twitter handle -->
-  <meta id="meta-twitter-site" name="twitter:site" content="@YOUR_TWITTER_HANDLE">
-  <!-- TODO: Replace with first author's Twitter handle -->
-  <meta id="meta-twitter-creator" name="twitter:creator" content="@AUTHOR_TWITTER_HANDLE">
-  <!-- TODO: Same as paper title above -->
-  <meta id="meta-twitter-title" name="twitter:title" content="PAPER_TITLE">
-  <!-- TODO: Same as description above -->
-  <meta id="meta-twitter-description" name="twitter:description" content="BRIEF_DESCRIPTION_OF_YOUR_RESEARCH_CONTRIBUTION_AND_FINDINGS">
-  <!-- TODO: Same as social preview image above -->
-  <meta id="meta-twitter-image" name="twitter:image" content="">
-  <meta id="meta-twitter-image-alt" name="twitter:image:alt" content="PAPER_TITLE - Research Preview">
-
-  <!-- Academic/Research Specific -->
-  <meta id="meta-citation-title" name="citation_title" content="PAPER_TITLE">
-  <meta id="meta-citation-publication-date" name="citation_publication_date" content="2024">
-  <meta id="meta-citation-conference-title" name="citation_conference_title" content="CONFERENCE_NAME">
-  <meta id="meta-citation-pdf-url" name="citation_pdf_url" content="">
-  <!-- TODO: citation_author tags will be injected dynamically by render.js -->
-
-  <!-- Additional SEO -->
-  <meta name="theme-color" content="#2563eb">
-  <meta name="msapplication-TileColor" content="#2563eb">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
-  <!-- Preconnect for performance -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://ajax.googleapis.com">
-  <link rel="preconnect" href="https://documentcloud.adobe.com">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-
-  <!-- Favicon and App Icons -->
-  <link rel="icon" type="image/x-icon" href="static/images/icon/RCI_LAB_LOGO.ico">
-  <link rel="apple-touch-icon" href="static/images/icon/RCI_LAB_LOGO.ico">
-
-  <!-- Critical CSS - Load synchronously -->
-  <link rel="stylesheet" href="static/css/bulma.min.css">
-  <link rel="stylesheet" href="static/css/index.css">
-
-  <!-- Non-critical CSS - Load asynchronously -->
-  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-
-  <!-- Fallback for browsers that don't support preload -->
-  <noscript>
-    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
-    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
-    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  </noscript>
-
-  <!-- Fonts - Optimized loading -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <!-- Defer non-critical JavaScript -->
-  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
-  <script defer src="static/js/fontawesome.all.min.js"></script>
-  <script defer src="static/js/bulma-carousel.min.js"></script>
-  <script defer src="static/js/bulma-slider.min.js"></script>
-
-  <!-- Existing template behavior -->
-  <script defer src="static/js/index.js"></script>
-
-  <!-- New runtime/data layer -->
-  <script defer src="static/js/content-schema.js"></script>
-  <script defer src="static/js/render.js"></script>
-
-  <!-- Structured Data for Academic Papers -->
-  <!-- TODO: Managed by render.js -->
-  <script id="structured-data-scholar" type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "ScholarlyArticle",
-    "headline": "PAPER_TITLE",
-    "description": "BRIEF_DESCRIPTION_OF_YOUR_RESEARCH_CONTRIBUTION_AND_FINDINGS",
-    "author": [],
-    "datePublished": "2024-01-01",
-    "publisher": {
-      "@type": "Organization",
-      "name": "CONFERENCE_OR_JOURNAL_NAME"
-    },
-    "url": "",
-    "image": "",
-    "keywords": [],
-    "abstract": "FULL_ABSTRACT_TEXT_HERE",
-    "citation": "BIBTEX_CITATION_HERE",
-    "isAccessibleForFree": true,
-    "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-    "mainEntity": {
-      "@type": "WebPage",
-      "@id": ""
-    },
-    "about": []
-  }
-  </script>
-
-  <!-- Website/Organization Structured Data -->
-  <!-- TODO: Managed by render.js -->
-  <script id="structured-data-org" type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "INSTITUTION_OR_LAB_NAME",
-    "url": "",
-    "logo": "",
-    "sameAs": []
-  }
-  </script>
+<!-- Scholarly metadata -->
+<meta name="citation_title" content="Linear or Bilinear: A Criterion for Koopman Rollouts in Sampling-Based Predictive Control">
+<meta name="citation_author" content="Lee, Kangmin">
+<meta name="citation_author" content="Kim, Sanghyun">
+<meta name="citation_publication_date" content="2026">
 </head>
-<body data-template-version="1.0.0">
+<body>
 
-  <noscript>
-    <section class="section">
-      <div class="container is-max-desktop">
-        <div class="notification is-warning">
-          This project page uses JavaScript to render paper content from <code>static/data/content.json</code> and <code>static/data/lab.json</code>.
-        </div>
-      </div>
-    </section>
-  </noscript>
+<!-- ============================ NAV ============================ -->
+<nav class="nav">
+  <div class="nav__inner">
+    <div class="nav__brand">Linear <span>or</span> Bilinear</div>
+    <div class="nav__links">
+      <a href="#demo">Demos</a>
+      <a href="#abstract">Abstract</a>
+      <a href="#criterion">Criterion</a>
+      <a href="#results">Results</a>
+      <a href="#params">Parameters</a>
+      <a href="#bibtex">Cite</a>
+    </div>
+    <a class="nav__gh" href="https://github.com/RCILab/koopman-mppi" aria-label="GitHub" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.79 23.4c.6.11.82-.26.82-.58v-2.2c-3.34.72-4.04-1.6-4.04-1.6-.55-1.4-1.34-1.77-1.34-1.77-1.1-.75.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.84 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.49 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12 12 0 0 0 12 .5Z"/></svg>
+    </a>
+  </div>
+</nav>
 
-  <!-- Scroll to Top Button -->
-  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
-    <i class="fas fa-chevron-up"></i>
-  </button>
+<!-- ============================ HERO ============================ -->
+<header class="hero">
+  <div class="wrap">
+    <span class="hero__venue">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 2 7l10 5 10-5-10-5Zm0 7.5L4.7 6 12 2.5 19.3 6 12 9.5ZM2 17l10 5 10-5v-7l-2 1v4.8l-8 4-8-4V11L2 10v7Z"/></svg>
+      Under review · Int. J. of Control, Automation and Systems
+    </span>
+    <h1>Linear <span class="accent">or</span> Bilinear<br>A Criterion for Koopman Rollouts in<br>Sampling-Based Predictive Control</h1>
+    <p class="hero__sub">Koopman-MPPI keeps its lifted rollout <em>linear in the input</em> — a convention inherited from convex MPC that sampling never required. We give the criterion for when that is enough, and build the controller around it.</p>
 
-  <!-- More Works Dropdown -->
-  <!-- TODO: Lab-wide related works are managed via static/data/lab.json -->
-  <div id="more-works-container" class="more-works-container" data-section="moreWorks" hidden>
-    <button class="more-works-btn" onclick="toggleMoreWorks()" title="View More Works from Our Lab">
-      <i class="fas fa-flask"></i>
-      More Works
-      <i class="fas fa-chevron-down dropdown-arrow"></i>
-    </button>
-    <div class="more-works-dropdown" id="moreWorksDropdown">
-      <div class="dropdown-header">
-        <h4 id="more-works-title">More Works from Our Lab</h4>
-        <button class="close-btn" onclick="toggleMoreWorks()">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <div id="works-list" class="works-list" data-list="lab.moreWorks"></div>
+    <div class="authors">
+      <span class="author">Kangmin Lee</span>
+      <span class="author">Sanghyun Kim<sup>*</sup></span>
+    </div>
+    <div class="affil">
+      Department of Mechanical Engineering, Kyung Hee University &nbsp;·&nbsp; Advanced Institute of Convergence Technology
+      <div class="corr"><sup>*</sup>Corresponding author</div>
+    </div>
+
+    <div class="btns">
+      <a class="btn btn--primary" href="static/pdfs/paper.pdf" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm8 1.5V8h4.5L14 3.5ZM8 12h8v1.5H8V12Zm0 3.5h8V17H8v-1.5Z"/></svg>
+        Paper (PDF)
+      </a>
+      <span class="btn btn--soon" aria-disabled="true">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 2 8l10 5 8-4v6h2V8L12 3Zm-6 9.2V16c0 1.7 2.7 3 6 3s6-1.3 6-3v-3.8l-6 3-6-3Z"/></svg>
+        arXiv <em>· Coming Soon</em>
+      </span>
+      <a class="btn btn--ghost" href="#bibtex">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h4v4H7V7Zm0 6h10v1.5H7V13Zm0 4h10v1.5H7V17Zm6-10h4v4h-4V7Z"/></svg>
+        BibTeX
+      </a>
+    </div>
+
+    <!-- headline stats -->
+    <div class="statgrid reveal">
+      <div class="stat"><div class="stat__num">84<small>%</small></div><div class="stat__lab">unicycle parking, bilinear — vs. <b style="color:var(--linear)">0%</b> linear, <b style="color:var(--oracle)">92%</b> oracle</div></div>
+      <div class="stat"><div class="stat__num">135<small>×</small></div><div class="stat__lab">more accurate drone prediction at the planning horizon</div></div>
+      <div class="stat"><div class="stat__num">6</div><div class="stat__lab">systems, from wheeled robots to soft arms, mapped by one criterion</div></div>
+      <div class="stat"><div class="stat__num">3.9<small>ms</small></div><div class="stat__lab">per control step, K=1024 samples — same cost regime as linear</div></div>
     </div>
   </div>
+</header>
 
-  <main id="main-content">
+<!-- ============================ DEMO ============================ -->
+<section class="section" id="demo">
+  <div class="wrap">
+    <span class="eyebrow">Watch the linear rollout fail</span>
+    <h2>Same lifting, two rollouts</h2>
+    <p class="lead">The linear baseline and our bilinear controller share one deep Koopman lifting — identical network, training data, and multi-step loss. They differ only in the rollout equation. On body-velocity platforms, that single change is the difference between reaching the goal and driving off.</p>
 
-    <!-- Hero -->
-    <section class="hero" id="section-hero" data-section="hero" data-bg-mode="custom" data-bg-value="linear-gradient(to bottom, var(--background-highlight) 0%, #dbeafe 60%, #f7fbff 90%, #ffffff 100%)">
-      <div class="hero-body">
-        <div class="container is-max-desktop">
-          <div class="columns is-centered">
-            <div class="column has-text-centered">
-
-              <!-- TODO: Replace with your paper title -->
-              <h1 id="paper-title"
-                  class="title is-1 publication-title"
-                  data-field="paper.title"
-                  data-editable="text">
-                Academic Project Page
-              </h1>
-
-              <div id="publication-authors"
-                   class="is-size-5 publication-authors"
-                   data-list="paper.authors">
-                <!-- TODO: Replace with your paper authors and their personal links -->
-              </div>
-
-              <div class="is-size-5 publication-authors">
-                <!-- TODO: Replace with your institution and conference/journal info -->
-                <span id="publication-venue"
-                      class="author-block"
-                      data-field="paper.venueText"
-                      data-editable="text">
-                  Institution Name<br>Conference name and year
-                </span>
-
-                <!-- TODO: Remove this line if no equal contribution or corresponding author -->
-                <span id="contribution-note"
-                      class="eql-cntrb"
-                      data-field="paper.contributionNote"
-                      data-editable="text"
-                      hidden>
-                </span>
-              </div>
-
-              <div class="column has-text-centered">
-                <div id="publication-links"
-                     class="publication-links"
-                     data-list="paper.links">
-                  <!-- TODO: Buttons such as Paper / YouTube / Code / arXiv are rendered here -->
-                </div>
-              </div>
-
-            </div>
+    <div class="demo">
+      <div class="figcard reveal">
+        <div class="figcard__media"><img src="static/gifs/unicycle_parking.gif" alt="Unicycle parking: bilinear and oracle park, linear drives off" loading="lazy"></div>
+        <div class="figcard__body">
+          <div class="figcard__title">Nonholonomic parking <span class="pill">50 trials · 10 start–goal pairs</span></div>
+          <p class="figcard__desc">The forward-speed input reaches position through the heading rotation <span class="val">(cos θ, sin θ)</span> — the maximal-gain-variation case. A constant input matrix is correct at only one heading, so the linear controller optimizes the <em>wrong</em> cost landscape and ends 3.1 m from the goal. The bilinear rollout parks near the oracle.</p>
+          <div class="legend">
+            <span class="chip ours">Ours · bilinear</span>
+            <span class="chip oracle">Oracle · true dynamics</span>
+            <span class="chip linear">Linear Koopman</span>
           </div>
         </div>
       </div>
-    </section>
-    <!-- End Hero -->
 
-    <!-- Teaser video / image -->
-   <section class="hero teaser" id="section-teaser" data-section="teaser" data-bg-mode="fixed" data-bg-value="white" hidden>
-      <div class="container is-max-desktop">
-        <div class="hero-body" style="text-align: center;">
-
-          <!-- TODO: Replace with your teaser video -->
-          <div id="teaser-video-wrapper" hidden>
-            <video poster=""
-                   id="teaser-video"
-                   autoplay
-                   controls
-                   muted
-                   loop
-                   height="100%"
-                   preload="metadata"
-                   data-field="paper.teaser.video">
-              <!-- TODO: Add your video file path here -->
-              <source id="teaser-video-source" src="" type="video/mp4">
-            </video>
-          </div>
-
-          <!-- If you want to put a teaser image instead of video, keep this image block. -->
-          <div id="teaser-image-wrapper" hidden>
-            <img id="teaser-image"
-                 src="static/images/figures/placeholder.png"
-                 alt="Teaser image"
-                 data-field="paper.teaser.image"
-                 data-asset-kind="image"
-                 style="width: 100%; max-width: 1000px; display: block; margin: 0 auto; border-radius: 6px;">
-          </div>
-
-          <!-- TODO: Replace with your video(or img) description -->
-          <h2 id="teaser-caption"
-              class="subtitle has-text-centered"
-              data-field="paper.teaser.caption"
-              data-editable="text"
-              style="margin-top: 1.5rem; font-size: 0.95rem; line-height: 1.5;">
-            Put video(or img) description here!
-          </h2>
-        </div>
-      </div>
-    </section>
-    <!-- End teaser video / image -->
-
-    <!-- Paper abstract -->
-    <section class="section hero" id="section-abstract" data-section="abstract" data-bg-mode="auto">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered has-text-centered">
-          <div class="column is-four-fifths">
-            <h2 id="abstract-title" class="title is-3" hidden>Abstract</h2>
-            <div class="content has-text-justified">
-              <!-- TODO: Replace with your paper abstract -->
-              <p id="paper-abstract"
-                 data-field="paper.abstract.text"
-                 data-editable="textarea">
-                This is a placeholder abstract for the RCILab paper page template. Replace this text with the actual abstract of your paper.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- End paper abstract -->
-
-    <!-- Image carousel -->
-    <section class="hero is-small" id="section-image-carousel" data-section="imageCarousel" data-bg-mode="auto" hidden>
-      <div class="hero-body">
-        <div class="container">
-          <h2 id="image-carousel-title" class="title is-3 has-text-centered" hidden></h2>
-          <div id="results-carousel" class="carousel results-carousel" data-list="paper.figureCarousel.items">
-            <!-- TODO: Replace with your research result images -->
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- End image carousel -->
-
-    <!-- Youtube video -->
-     <section class="hero is-small" id="section-youtube" data-section="youtube" data-bg-mode="auto" hidden>
-      <div class="hero-body">
-        <div class="container is-max-desktop">
-          <div class="columns is-centered">
-            <div class="column is-four-fifths has-text-centered">
-              <h2 class="title is-3" id="youtube-section-title" hidden></h2>
-
-              <div style="max-width: 960px; margin: 0 auto;">
-                <div class="publication-video">
-                  <iframe id="youtube-embed"
-                          src=""
-                          data-field="paper.youtube.embedUrl"
-                          frameborder="0"
-                          allow="autoplay; encrypted-media"
-                          allowfullscreen>
-                  </iframe>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- End youtube video -->
-
-    <!-- Video carousel -->
-    <section class="hero is-small" id="section-video-carousel" data-section="videoCarousel" data-bg-mode="auto" hidden>
-      <div class="hero-body">
-        <div class="container is-max-desktop">
-          <div class="columns is-centered">
-            <div class="column is-four-fifths has-text-centered">
-              <h2 id="video-carousel-title" class="title is-3" hidden></h2>
-
-              <div style="max-width: 960px; margin: 0 auto;">
-                <div id="video-carousel" class="carousel results-carousel" data-list="paper.videoCarousel.items">
-                  <!-- TODO: Replace with your carousel videos -->
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- End video carousel -->
-
-    <!-- Paper poster -->
-    <section class="hero is-small" id="section-poster" data-section="poster" data-bg-mode="auto" hidden>
-      <div class="hero-body">
-        <div class="container is-max-desktop">
-          <div class="columns is-centered">
-            <div class="column is-four-fifths has-text-centered">
-              <h2 class="title is-3" id="poster-title" hidden></h2>
-
-              <!-- TODO: Replace with your poster PDF -->
-              <div style="text-align: center;">
-                <iframe id="poster-iframe"
-                        src=""
-                        data-field="paper.poster.pdf"
-                        style="width: 100%; max-width: 900px; aspect-ratio: 210 / 260; border: none; display: block; margin: 0 auto;">
-                </iframe>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- End paper poster -->
-
-    <!-- BibTex citation -->
-    <section class="section" id="BibTeX" data-section="bibtex" data-bg-mode="auto">
-      <div class="container is-max-desktop content">
-        <div class="bibtex-header">
-          <h2 id="bibtex-title" class="title" hidden>BibTeX</h2>
-          <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
-            <i class="fas fa-copy"></i>
-            <span class="copy-text">Copy</span>
-          </button>
-        </div>
-        <pre id="bibtex-code"
-             data-field="paper.bibtex.content"
-             data-editable="textarea"><code>@article{YourPaperKey2024,
-  title={Your Paper Title Here},
-  author={First Author and Second Author and Third Author},
-  journal={Conference/Journal Name},
-  year={2024},
-  url={https://your-domain.com/your-project-page}
-}</code></pre>
-      </div>
-    </section>
-    <!-- End BibTex citation -->
-
-
-    <!-- People -->
-    <section class="section hero" id="section-people" data-section="people" data-bg-mode="auto" hidden>
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-four-fifths has-text-centered">
-            <h2 id="people-title" class="title is-3" hidden></h2>
-
-            <!-- 4명 이하 -->
-            <div id="people-grid"
-                class="columns is-centered is-multiline is-variable is-6"
-                hidden>
-            </div>
-
-            <!-- 5명 이상 -->
-            <div id="people-carousel-wrapper" class="people-carousel-wrapper" hidden>
-              <button id="people-prev" class="slider-navigation-previous is-hidden" type="button" aria-label="Previous people">
-                &#10094;
-              </button>
-
-              <div class="people-carousel-viewport">
-                <div id="people-track" class="people-carousel-track"></div>
-              </div>
-
-              <button id="people-next" class="slider-navigation-next is-hidden" type="button" aria-label="Next people">
-                &#10095;
-              </button>
-            </div>
-
-            <div id="people-pagination" class="people-pagination slider-pagination" hidden></div>
-          </div> 
-        </div>
-      </div>
-    </section>
-    <!-- End People -->
-
-
-  </main>
-
-  <!-- =========================================================
-       Templates for runtime rendering
-       - Central manager can also use these field/list bindings
-       ========================================================= -->
-
-  <template id="author-template">
-    <span class="author-block">
-      <a class="author-link" href="#" target="_blank" rel="noopener"></a><sup class="author-mark" hidden></sup><span class="author-comma">,</span>
-    </span>
-  </template>
-
-  <template id="link-button-template">
-    <span class="link-block">
-      <a href="#"
-         target="_blank"
-         class="external-link button is-normal is-rounded is-dark"
-         rel="noopener">
-        <span class="icon"></span>
-        <span class="button-text"></span>
-      </a>
-    </span>
-  </template>
-
-  <template id="work-item-template">
-    <a href="#"
-       class="work-item"
-       target="_blank"
-       rel="noopener">
-      <div class="work-info">
-        <h5 class="work-title">Paper Title</h5>
-        <p class="work-description">Brief description of the work and its main contribution.</p>
-        <span class="work-venue">Conference/Journal 2024</span>
-      </div>
-      <i class="fas fa-external-link-alt"></i>
-    </a>
-  </template>
-
-  <template id="figure-carousel-item-template">
-    <div class="item">
-      <img class="carousel-image"
-           src="static/images/figures/placeholder.png"
-           alt="Research result visualization"
-           loading="lazy">
-      <h2 class="subtitle has-text-centered carousel-caption">Figure description.</h2>
-    </div>
-  </template>
-
-  <template id="video-carousel-item-template">
-    <div class="item">
-      <video class="carousel-video"
-             poster=""
-             controls
-             muted
-             loop
-             height="100%"
-             preload="metadata"
-             style="display: block; margin: 0 auto;">
-        <source class="carousel-video-source" src="" type="video/mp4">
-      </video>
-      <h2 class="subtitle has-text-centered carousel-video-caption" hidden></h2>
-    </div>
-  </template>
-
-  <template id="person-template">
-    <div class="column is-one-quarter">
-      <div class="people-grid-card has-text-centered">
-        <a class="person-image-link" href="#" target="_blank" rel="noopener">
-          <img class="person-image"
-              src="static/images/people/placeholder.png"
-              alt="Person"
-              style="width: 100%; max-width: 220px; aspect-ratio: 3 / 4; object-fit: cover; margin: 0 auto; display: block;">
-        </a>
-        <p style="margin-top: 12px;">
-          <a class="person-link" href="#" target="_blank" rel="noopener">Person Name</a>
-        </p>
-      </div>
-    </div>
-  </template>
-
-  <template id="person-carousel-card-template">
-    <div class="people-card has-text-centered">
-      <a class="person-image-link" href="#" target="_blank" rel="noopener">
-        <img class="person-image"
-            src="static/images/people/placeholder.png"
-            alt="Person">
-      </a>
-      <p class="people-card-name">
-        <a class="person-link" href="#" target="_blank" rel="noopener">Person Name</a>
-      </p>
-    </div>
-  </template>
-
-  <footer class="footer" data-bg-mode="auto">
-    <div class="container">
-      <div class="columns is-centered">
-        <div class="column is-8">
-          <div class="content">
-            <p>
-              This page was built using the
-              <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank" rel="noopener">
-                Academic Project Page Template
-              </a>
-              which was adopted from the
-              <a href="https://nerfies.github.io" target="_blank" rel="noopener">Nerfies</a>
-              project page. You are free to borrow the source code of this website, we just ask that you link back to the original template in the footer.
-              <br><br>
-              This RCILab template adapts the original template for reusable lab-wide paper pages.
-              <br><br>
-              This website template is licensed under a
-              <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
-                Creative Commons Attribution-ShareAlike 4.0 International License
-              </a>.
-            </p>
+      <div class="figcard reveal">
+        <div class="figcard__media"><img src="static/gifs/drone_figure8.gif" alt="Drone tracking a 3D figure-8; linear diverges" loading="lazy"></div>
+        <div class="figcard__body">
+          <div class="figcard__title">Body-velocity drone, figure-8 <span class="pill">3D · yaw along path</span></div>
+          <p class="figcard__desc">Commanded in body-frame velocities, the world-position gain is the yaw rotation <span class="val">R(ψ)</span>, sweeping its full range. The bilinear controller tracks at oracle accuracy (0.05 m); the oracle line sits directly under it. The linear controller drifts off every reference (1.4 m).</p>
+          <div class="legend">
+            <span class="chip ref dot">reference</span>
+            <span class="chip ours">Ours · bilinear</span>
+            <span class="chip oracle">Oracle</span>
+            <span class="chip linear">Linear</span>
           </div>
         </div>
       </div>
     </div>
-  </footer>
+  </div>
+</section>
 
-  <!-- Statcounter tracking code -->
-  <!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
-  <!-- End of Statcounter Code -->
+<!-- ============================ ABSTRACT ============================ -->
+<section class="section section--soft" id="abstract">
+  <div class="wrap">
+    <span class="eyebrow">Abstract</span>
+    <h2 style="margin-bottom:24px">The convention, and the criterion</h2>
+    <div class="prose">
+      <p>Koopman operator models let sampling-based <strong>Model Predictive Path Integral (MPPI)</strong> control roll out thousands of sampled input sequences through an inexpensive learned lifted model. Existing Koopman-MPPI, however, keeps that lifted model <strong>linear in the input</strong>, a convention inherited from convex Koopman MPC that sampling never required. It fixes one input response for every configuration, and no criterion says when that is enough.</p>
+      <p>This paper supplies the criterion and builds the controller around it. When the <strong>configuration-dependent gain</strong> through which the input reaches the tracked output varies appreciably over the operating region, no constant input matrix can match it under the standard linear readout, no state dictionary repairs the mismatch, and a <strong>bilinear</strong> lift becomes necessary. When the gain is nearly constant, the two lifts predict alike. Since a bilinear step stays in the same matrix–vector cost regime either way, the criterion makes the bilinear model the <strong>default rollout</strong>.</p>
+      <p>Each sample's cost carries an online error tube from a proportional identification bound, and a free-energy analysis supplies a practical-stability guarantee. Across six systems, bilinear Koopman MPPI tracks with near-oracle accuracy on a wheeled vehicle and a drone under body-frame velocity commands, where its linear counterpart fails structurally. On force- and acceleration-driven platforms the two rollouts perform alike and bilinearity keeps mainly a parameter-efficiency advantage — which explains the successes reported for linear Koopman control.</p>
+    </div>
+  </div>
+</section>
 
+<!-- ============================ CRITERION ============================ -->
+<section class="section" id="criterion">
+  <div class="wrap">
+    <span class="eyebrow">The criterion</span>
+    <h2>When is bilinearity necessary?</h2>
+    <p class="lead">The distinction is a property of the <em>system</em>, not the optimizer. It is captured by the normalized variation of the input gain over the operating region.</p>
+
+    <div class="formula">
+      first-order response:&nbsp; y<sub>t+1</sub> − y<sub>t</sub> = ( <b>d(x)</b> + <b>Φ(x)</b>·u ) Δt + O(Δt²)
+      &nbsp;&nbsp;·&nbsp;&nbsp; input gain <b>Φ(x)</b> = ∇h(x) G(x)
+      &nbsp;&nbsp;·&nbsp;&nbsp; criterion:&nbsp; ν̂ = ν<sub>Φ</sub> / sup‖Φ(x)‖
+    </div>
+
+    <div class="crit" style="margin-top:26px">
+      <div class="critcard critcard--lin reveal">
+        <span class="tag">ν̂ ≈ 0 · linear sufficient</span>
+        <h3>The gain barely moves</h3>
+        <img src="static/images/figures/fig_1a.png" alt="Nearly constant input gain over the operating region">
+        <p>When the input reaches the output at second order (force, acceleration, torque) or the configuration barely turns, one constant input matrix fits the whole operating region. Linear and bilinear rollouts <strong>predict alike</strong> — this is the regime behind reported linear-Koopman successes.</p>
+      </div>
+      <div class="critcard critcard--bi reveal">
+        <span class="tag">ν̂ large · bilinear necessary</span>
+        <h3>The gain sweeps its range</h3>
+        <img src="static/images/figures/fig_1b.png" alt="Input gain sweeping its full range">
+        <p>When a heading or yaw rotates the gain across its full range, <strong>no constant input matrix can match it</strong> under the linear readout, and <strong>no state dictionary repairs it</strong> — the input matrix stays constant however wide the lift grows. Only a bilinear lift, where the input multiplies the lifted state, tracks the rotation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ RESULTS ============================ -->
+<section class="section section--soft" id="results">
+  <div class="wrap">
+    <span class="eyebrow">Results</span>
+    <h2>Six systems, one dividing line</h2>
+    <p class="lead">Each system is placed by its normalized gain variation ν̂. Where ν̂ is large the bilinear rollout is decisive; where ν̂ ≈ 0 the two coincide and only a parameter-efficiency edge remains.</p>
+
+    <div class="tablewrap reveal">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>System</th>
+            <th>Gain variation ν̂</th>
+            <th>Closed loop — Oracle / Linear / Bilinear</th>
+            <th>Prediction: bilinear vs. linear</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="sys">Unicycle</td>
+            <td><span class="mono">R(θ)</span>, maximal (2.0)</td>
+            <td><span class="val o">92</span> / <span class="val l">0</span> / <span class="val b">84</span> &nbsp;% parked</td>
+            <td class="val">42–48×</td>
+            <td><span class="badge need">bilinear</span></td>
+          </tr>
+          <tr>
+            <td class="sys">Drone</td>
+            <td><span class="mono">R(ψ)</span>, maximal (2.0)</td>
+            <td><span class="val o">0.05</span> / <span class="val l">1.4</span> / <span class="val b">0.05</span> &nbsp;m</td>
+            <td class="val">135 ± 7×</td>
+            <td><span class="badge need">bilinear</span></td>
+          </tr>
+          <tr>
+            <td class="sys">Pendulum</td>
+            <td>second order (0)</td>
+            <td>—</td>
+            <td class="val">~4× fewer neurons</td>
+            <td><span class="badge ok">alike</span></td>
+          </tr>
+          <tr>
+            <td class="sys">Quadrotor</td>
+            <td>second order (0)</td>
+            <td><span class="val o">0.12</span> / <span class="val l">0.44</span> / <span class="val b">0.45</span> &nbsp;m</td>
+            <td class="val">1.0–1.1×</td>
+            <td><span class="badge ok">alike</span></td>
+          </tr>
+          <tr>
+            <td class="sys">Torque arm</td>
+            <td>second order, inertia (0)</td>
+            <td>—</td>
+            <td class="val">0.88–0.98×</td>
+            <td><span class="badge ok">alike</span></td>
+          </tr>
+          <tr>
+            <td class="sys">Soft arm</td>
+            <td>low (curvature)</td>
+            <td>—</td>
+            <td class="val">0.93–1.09×</td>
+            <td><span class="badge ok">alike</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tblnote">Closed-loop entries: parking rate (unicycle), mean tracking error (drone), median goal distance (quadrotor). A prediction ratio near 1× means the two rollouts coincide; dashed rows are evaluated through prediction. Oracle rolls out the true dynamics and is not a performance ceiling.</p>
+
+    <!-- plots -->
+    <div class="plots" style="margin-top:40px">
+      <div class="plotcard reveal">
+        <h4>Drone — open-loop prediction</h4>
+        <p>World-position error over the planning horizon (log scale). The gap is structural: doubling the linear lift's dimension does not close it.</p>
+        <img src="static/plots/drone_prediction.svg" alt="Drone prediction error vs horizon">
+      </div>
+      <div class="plotcard reveal">
+        <h4>Pendulum — efficiency where coupling is weak</h4>
+        <p>Even when bilinearity is not <em>required</em>, the structured input term substitutes for network width — matching linear accuracy with ~4× fewer neurons.</p>
+        <img src="static/plots/pendulum_width.svg" alt="Pendulum error vs hidden neurons">
+      </div>
+      <div class="plotcard reveal">
+        <h4>Quadrotor — the boundary</h4>
+        <p>Thrust reaches position only through acceleration, so despite ±69° tilts the linear and bilinear predictions coincide on full state and velocity alike.</p>
+        <img src="static/plots/quad_horizon.svg" alt="Quadrotor prediction error vs horizon">
+      </div>
+      <div class="plotcard reveal">
+        <h4>Error tube — 0 violations / 82,000 steps</h4>
+        <p>Each sample's cost carries an online error tube from a proportional identification bound. It contains the true lifted error at every held-out step.</p>
+        <img src="static/plots/error_tube.svg" alt="Certified error tube vs true error">
+      </div>
+    </div>
+
+    <!-- baselines table -->
+    <h3 style="font-size:20px;margin:48px 0 8px">Ruling out capacity</h3>
+    <p class="lead" style="margin-bottom:22px">Open-loop 15-step world-position error on the drone, mean ± s.d. over ten training runs on a shared 1,000-trajectory held-out set. A larger linear lift and a generic MLP both miss the rotation the bilinear lift represents exactly.</p>
+    <div class="tablewrap reveal" style="max-width:560px">
+      <table class="tbl" style="min-width:0">
+        <thead><tr><th>Rollout model</th><th>Latent N</th><th>Prediction error (m)</th></tr></thead>
+        <tbody>
+          <tr><td class="sys">Linear</td><td class="val">13</td><td class="val l">0.409 ± 0.001</td></tr>
+          <tr><td class="sys">Linear (large)</td><td class="val">29</td><td class="val l">0.409 ± 0.001</td></tr>
+          <tr><td class="sys">MLP dynamics</td><td class="val">—</td><td class="val">0.078 ± 0.017</td></tr>
+          <tr><td class="sys">Bilinear (ours)</td><td class="val">13</td><td class="val b">0.0030 ± 0.0001</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PARAMETERS ============================ -->
+<section class="section" id="params">
+  <div class="wrap">
+    <span class="eyebrow">Reproducibility</span>
+    <h2>Experiment parameters</h2>
+    <p class="lead">Key per-system MPPI hyperparameters, shared by the bilinear controller and the linear baseline. Method-specific choices follow the linear baseline's reported settings.</p>
+
+    <div class="tablewrap reveal">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>System</th>
+            <th>N — lifted dim</th>
+            <th>K — samples</th>
+            <th>T — horizon</th>
+            <th>Δt (s)</th>
+            <th>λ — temperature</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="sys">Unicycle</td><td class="val">8</td><td class="val">1,536</td><td class="val">40</td><td class="val">0.05</td><td class="val">0.4</td></tr>
+          <tr><td class="sys">Drone</td><td class="val">13</td><td class="val">1,024</td><td class="val">15</td><td class="val">0.05</td><td class="val">0.25</td></tr>
+          <tr><td class="sys">Pendulum</td><td class="val">8</td><td class="val">2,560</td><td class="val">65</td><td class="val">0.05</td><td class="val">0.8</td></tr>
+          <tr><td class="sys">Quadrotor</td><td class="val">24</td><td class="val">1,500</td><td class="val">20</td><td class="val">0.02</td><td class="val">0.5</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="paramnote">
+      <div class="pn"><b>Simulators.</b> Quadrotor &amp; torque arm in MuJoCo · soft continuum arm in SoftManiSim · unicycle/drone kinematic · pendulum analytical</div>
+      <div class="pn"><b>Protocol.</b> Unicycle 50 parking trials · drone 60 episodes · quadrotor 20 runs</div>
+      <div class="pn"><b>Rollout cost.</b> m+1 matrix–vector products per step vs. 1 for linear — same cost regime</div>
+      <div class="pn"><b>Timing (CPU, 4 threads).</b> 3.9 ms bilinear vs. 13 ms true-dynamics vs. 76 ms physics-engine rollout</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ BIBTEX ============================ -->
+<section class="section section--soft" id="bibtex">
+  <div class="wrap">
+    <span class="eyebrow">Citation</span>
+    <h2 style="margin-bottom:24px">BibTeX</h2>
+    <div class="bibbox">
+      <button class="copybtn" id="copyBib">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 2h9a2 2 0 0 1 2 2v12h-2V4H9V2Zm-4 4h9a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Zm0 2v12h9V8H5Z"/></svg>
+        <span id="copyLbl">Copy</span>
+      </button>
+<pre id="bibtex">@article{lee2026linearbilinear,
+  title   = {Linear or Bilinear: A Criterion for Koopman Rollouts
+             in Sampling-Based Predictive Control},
+  author  = {Lee, Kangmin and Kim, Sanghyun},
+  journal = {International Journal of Control, Automation and Systems},
+  year    = {2026},
+  note    = {Under review},
+  url     = {https://rcilab.github.io/koopman-mppi}
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__lab">RCILab · Kyung Hee University</div>
+    <div class="footer__meta">
+      Robotics, Control &amp; Intelligence Laboratory<br>
+      Kangmin Lee &nbsp;·&nbsp; Sanghyun Kim<br>
+      <a href="https://github.com/RCILab" target="_blank" rel="noopener">github.com/RCILab</a>
+    </div>
+    <div class="footer__cc">
+      Page content © 2026 the authors ·
+      released under <a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var btn=document.getElementById('copyBib'), lbl=document.getElementById('copyLbl');
+  if(btn){btn.addEventListener('click',function(){
+    var t=document.getElementById('bibtex').innerText;
+    navigator.clipboard.writeText(t).then(function(){
+      lbl.textContent='Copied!';setTimeout(function(){lbl.textContent='Copy';},1600);
+    });
+  });}
+  var els=document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(en){en.forEach(function(e){
+      if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+    });},{threshold:.12});
+    els.forEach(function(el){io.observe(el);});
+  } else { els.forEach(function(el){el.classList.add('in');}); }
+})();
+</script>
 </body>
 </html>

@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="icon" href="static/images/icon/RCI_LAB_LOGO.ico">
-<link rel="stylesheet" href="static/css/site.css?v=5">
+<link rel="stylesheet" href="static/css/site.css?v=6">
 
 <!-- Scholarly metadata -->
 <meta name="citation_title" content="Linear or Bilinear: A Criterion for Koopman Rollouts in Sampling-Based Predictive Control">
@@ -32,8 +32,8 @@
   <div class="nav__inner">
     <div class="nav__brand">Linear <span>or</span> Bilinear</div>
     <div class="nav__links">
-      <a href="#demo">Demos</a>
       <a href="#abstract">Abstract</a>
+      <a href="#demo">Demos</a>
       <a href="#contributions">Contributions</a>
       <a href="#criterion">Criterion</a>
       <a href="#results">Results</a>
@@ -51,7 +51,6 @@
       Under review · Int. J. of Control, Automation and Systems
     </span>
     <h1>Linear <span class="accent">or</span> Bilinear:<br>A Criterion for Koopman Rollouts<br>in Sampling-Based Predictive Control</h1>
-    <p class="hero__sub">Koopman-MPPI keeps its lifted rollout <em>linear in the input</em> — a convention inherited from convex MPC that sampling never required. We give the criterion for when that is enough, and build the controller around it.</p>
 
     <div class="authors">
       <span class="author">Kangmin Lee</span>
@@ -78,6 +77,20 @@
     </div>
   </div>
 </header>
+
+<!-- ============================ ABSTRACT ============================ -->
+<section class="section section--soft" id="abstract">
+  <div class="wrap">
+    <span class="eyebrow">Abstract</span>
+    <h2 style="margin-bottom:24px">The convention, and the criterion</h2>
+    <div class="prose">
+      <p>Koopman operator models let sampling-based <strong>Model Predictive Path Integral (MPPI)</strong> control roll out thousands of sampled input sequences through an inexpensive learned lifted model. Existing Koopman-MPPI, however, keeps that lifted model <strong>linear in the input</strong>, a convention inherited from convex Koopman MPC that sampling never required. It fixes one input response for every configuration, and no criterion says when that is enough.</p>
+      <p>This paper supplies the criterion and builds the controller around it. When the <strong>configuration-dependent gain</strong> through which the input reaches the tracked output varies appreciably over the operating region, no constant input matrix can match it under the standard linear readout, no state dictionary repairs the mismatch, and a <strong>bilinear</strong> lift becomes necessary. When the gain is nearly constant, the two lifts predict alike. Since a bilinear step stays in the same matrix–vector cost regime either way, the criterion makes the bilinear model the <strong>default rollout</strong>.</p>
+      <p>Each sample's cost carries an online error tube from a proportional identification bound, and a free-energy analysis supplies a practical-stability guarantee. Across six systems, bilinear Koopman MPPI tracks with near-oracle accuracy on a wheeled vehicle and a drone under body-frame velocity commands, where its linear counterpart fails structurally. On force- and acceleration-driven platforms the two rollouts perform alike and bilinearity keeps mainly a parameter-efficiency advantage — which explains the successes reported for linear Koopman control.</p>
+    </div>
+
+  </div>
+</section>
 
 <!-- ============================ DEMO ============================ -->
 <section class="section" id="demo">
@@ -148,22 +161,9 @@
   </div>
 </section>
 
-<!-- ============================ ABSTRACT ============================ -->
-<section class="section section--soft" id="abstract">
-  <div class="wrap">
-    <span class="eyebrow">Abstract</span>
-    <h2 style="margin-bottom:24px">The convention, and the criterion</h2>
-    <div class="prose">
-      <p>Koopman operator models let sampling-based <strong>Model Predictive Path Integral (MPPI)</strong> control roll out thousands of sampled input sequences through an inexpensive learned lifted model. Existing Koopman-MPPI, however, keeps that lifted model <strong>linear in the input</strong>, a convention inherited from convex Koopman MPC that sampling never required. It fixes one input response for every configuration, and no criterion says when that is enough.</p>
-      <p>This paper supplies the criterion and builds the controller around it. When the <strong>configuration-dependent gain</strong> through which the input reaches the tracked output varies appreciably over the operating region, no constant input matrix can match it under the standard linear readout, no state dictionary repairs the mismatch, and a <strong>bilinear</strong> lift becomes necessary. When the gain is nearly constant, the two lifts predict alike. Since a bilinear step stays in the same matrix–vector cost regime either way, the criterion makes the bilinear model the <strong>default rollout</strong>.</p>
-      <p>Each sample's cost carries an online error tube from a proportional identification bound, and a free-energy analysis supplies a practical-stability guarantee. Across six systems, bilinear Koopman MPPI tracks with near-oracle accuracy on a wheeled vehicle and a drone under body-frame velocity commands, where its linear counterpart fails structurally. On force- and acceleration-driven platforms the two rollouts perform alike and bilinearity keeps mainly a parameter-efficiency advantage — which explains the successes reported for linear Koopman control.</p>
-    </div>
-
-  </div>
-</section>
 
 <!-- ============================ CONTRIBUTIONS ============================ -->
-<section class="section" id="contributions">
+<section class="section section--soft" id="contributions">
   <div class="wrap">
     <span class="eyebrow">Contributions</span>
     <h2>What the paper adds</h2>

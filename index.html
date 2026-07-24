@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="icon" href="static/images/icon/RCI_LAB_LOGO.ico">
-<link rel="stylesheet" href="static/css/site.css?v=3">
+<link rel="stylesheet" href="static/css/site.css?v=4">
 
 <!-- Scholarly metadata -->
 <meta name="citation_title" content="Linear or Bilinear: A Criterion for Koopman Rollouts in Sampling-Based Predictive Control">
@@ -84,7 +84,7 @@
   <div class="wrap">
     <span class="eyebrow">See the criterion in action</span>
     <h2>Same lifting, two rollouts</h2>
-    <p class="lead">The linear baseline and our bilinear controller share one deep Koopman lifting — identical network, training data, and multi-step loss. They differ only in the rollout equation. Whether that single change matters is a property of the robot, not the optimizer.</p>
+    <p class="lead">The linear baseline and the bilinear controller share one deep Koopman lifting — identical network, training data, and multi-step loss. They differ only in the rollout equation. Whether that single change matters is a property of the robot, not the optimizer.</p>
 
     <div class="demogroup"><span class="grouplabel need">Bilinear necessary — the gain sweeps its range</span></div>
 
@@ -95,9 +95,9 @@
         <p>The forward-speed input reaches position through the heading rotation <span class="val">(cos θ, sin θ)</span> — the maximal gain-variation case. A constant input matrix is right at only one heading, so the linear controller optimizes the <em>wrong</em> cost landscape and drives off, while the bilinear rollout parks near the oracle.</p>
       </div>
       <div class="triptych">
-        <div class="tri"><img src="static/gifs/fig_uni_bilinear.gif" alt="Unicycle parking — bilinear" loading="lazy"><div class="tri__lab ours">Ours · bilinear</div></div>
-        <div class="tri"><img src="static/gifs/fig_uni_oracle.gif" alt="Unicycle parking — oracle" loading="lazy"><div class="tri__lab oracle">Oracle · true dynamics</div></div>
+        <div class="tri"><img src="static/gifs/fig_uni_oracle.gif" alt="Unicycle parking — oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
         <div class="tri"><img src="static/gifs/fig_uni_linear.gif" alt="Unicycle parking — linear" loading="lazy"><div class="tri__lab linear">Linear Koopman</div></div>
+        <div class="tri"><img src="static/gifs/fig_uni_bilinear.gif" alt="Unicycle parking — bilinear" loading="lazy"><div class="tri__lab ours">Bilinear Koopman</div></div>
       </div>
     </div>
 
@@ -108,9 +108,9 @@
         <p>Commanded in <strong>body-frame velocities</strong>, the world-position gain is the yaw rotation <span class="val">R(ψ)</span>, sweeping its full range. The bilinear controller tracks at oracle accuracy (0.05 m), while the linear controller drifts off every reference (1.4 m).</p>
       </div>
       <div class="triptych">
-        <div class="tri"><img src="static/gifs/fig_drone_bilinear.gif" alt="Drone figure-8 — bilinear" loading="lazy"><div class="tri__lab ours">Ours · bilinear</div></div>
-        <div class="tri"><img src="static/gifs/fig_drone_oracle.gif" alt="Drone figure-8 — oracle" loading="lazy"><div class="tri__lab oracle">Oracle · true dynamics</div></div>
+        <div class="tri"><img src="static/gifs/fig_drone_oracle.gif" alt="Drone figure-8 — oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
         <div class="tri"><img src="static/gifs/fig_drone_linear.gif" alt="Drone figure-8 — linear" loading="lazy"><div class="tri__lab linear">Linear Koopman</div></div>
+        <div class="tri"><img src="static/gifs/fig_drone_bilinear.gif" alt="Drone figure-8 — bilinear" loading="lazy"><div class="tri__lab ours">Bilinear Koopman</div></div>
       </div>
     </div>
 
@@ -123,9 +123,9 @@
         <p>Driven by <strong>thrust and body torques</strong>, the input reaches position only at second order through acceleration, so the gain barely varies. Despite aggressive tilts up to ±69°, all three controllers fly to the goal alike — the linear and bilinear rollouts coincide. (This is a different input class from the velocity-commanded drone above.)</p>
       </div>
       <div class="triptych">
-        <div class="tri"><img src="static/gifs/fig_quad_bilinear.gif" alt="Quadrotor fly-to-goal — bilinear" loading="lazy"><div class="tri__lab ours">Ours · bilinear</div></div>
-        <div class="tri"><img src="static/gifs/fig_quad_oracle.gif" alt="Quadrotor fly-to-goal — oracle" loading="lazy"><div class="tri__lab oracle">Oracle · true dynamics</div></div>
+        <div class="tri"><img src="static/gifs/fig_quad_oracle.gif" alt="Quadrotor fly-to-goal — oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
         <div class="tri"><img src="static/gifs/fig_quad_linear.gif" alt="Quadrotor fly-to-goal — linear" loading="lazy"><div class="tri__lab linear">Linear Koopman</div></div>
+        <div class="tri"><img src="static/gifs/fig_quad_bilinear.gif" alt="Quadrotor fly-to-goal — bilinear" loading="lazy"><div class="tri__lab ours">Bilinear Koopman</div></div>
       </div>
     </div>
 
@@ -136,9 +136,9 @@
         <p>The slowly varying curvature keeps the effective gain nearly constant, so both rollouts track the target to within millimetres. This is the regime behind reported linear-Koopman successes on soft and force-driven robots.</p>
       </div>
       <div class="triptych">
-        <div class="tri"><img src="static/gifs/fig_soft_bilinear.gif" alt="Soft arm — bilinear" loading="lazy"><div class="tri__lab ours">Ours · bilinear</div></div>
-        <div class="tri"><img src="static/gifs/fig_soft_oracle.gif" alt="Soft arm — oracle" loading="lazy"><div class="tri__lab oracle">Oracle · true dynamics</div></div>
+        <div class="tri"><img src="static/gifs/fig_soft_oracle.gif" alt="Soft arm — oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
         <div class="tri"><img src="static/gifs/fig_soft_linear.gif" alt="Soft arm — linear" loading="lazy"><div class="tri__lab linear">Linear Koopman</div></div>
+        <div class="tri"><img src="static/gifs/fig_soft_bilinear.gif" alt="Soft arm — bilinear" loading="lazy"><div class="tri__lab ours">Bilinear Koopman</div></div>
       </div>
     </div>
 

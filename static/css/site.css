@@ -267,7 +267,7 @@ table.tbl td .mono{font-family:var(--mono);font-size:13.5px}
 .soloimg img{width:100%;display:block}
 .structnote{margin-top:38px;background:var(--brand-tint);border:1px solid rgba(47,109,246,.18);border-radius:var(--radius);padding:20px 24px;font-size:15.5px;color:var(--ink)}
 .structnote b{color:var(--brand-deep)}
-@media(max-width:640px){.triptych{grid-template-columns:1fr}}
+@media(max-width:560px){.triptych{gap:6px}.tri__lab{font-size:11px;padding:6px 3px;gap:5px}}
 
 /* justified body paragraphs */
 .prose p,.lead,.demoblock__head p,.critcard p,.structnote,.contriblist li,.tblnote,.figcard__desc{text-align:justify;text-justify:inter-word;-webkit-hyphens:auto;hyphens:auto}

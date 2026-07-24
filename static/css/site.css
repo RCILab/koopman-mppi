@@ -313,6 +313,26 @@ table.tbl td .mono{font-family:var(--mono);font-size:13.5px}
 .tblnote{text-align:center}
 .paramnote{justify-content:flex-start}
 
+/* method: equations + algorithm */
+.eqrow{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px}
+.eqcard{border:1px solid var(--line);border-radius:var(--radius);padding:24px 22px;background:#fff;box-shadow:var(--shadow-sm);text-align:center}
+.eqcard--lin{border-top:4px solid var(--amber)}
+.eqcard--bi{border-top:4px solid var(--brand)}
+.eqlabel{font-size:12.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px}
+.eqcard--lin .eqlabel{color:var(--amber)}
+.eqcard--bi .eqlabel{color:var(--brand)}
+.eq{font-family:"STIX Two Math","Cambria Math","Latin Modern Math",Georgia,serif;font-style:italic;font-size:22px;color:var(--ink);margin:4px 0 16px;line-height:1.4}
+.eq b{font-weight:700}
+.eqcard p{font-size:14.5px;color:var(--muted);margin:0;text-align:center}
+.methodnote{max-width:760px;margin:28px auto 0;font-size:16px;color:var(--body);text-align:justify;line-height:1.7}
+.methodnote b{color:var(--ink)}
+.algo{max-width:720px;margin:34px auto 0;border:1px solid var(--line);border-radius:var(--radius);background:#fff;padding:22px 26px;text-align:left;box-shadow:var(--shadow-sm)}
+.algo__title{font-size:13px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--brand-deep);margin-bottom:16px;text-align:center}
+.algo ol{margin:0;padding-left:22px;display:grid;gap:10px}
+.algo li{font-size:15px;color:var(--body);line-height:1.6}
+.algo i{font-family:"STIX Two Math",Georgia,serif}
+@media(max-width:760px){.eqrow{grid-template-columns:1fr}}
+
 /* reveal-on-scroll — content is always visible; .in only adds a gentle entrance */
 .reveal{opacity:1}
 .reveal.in{animation:rise .6s cubic-bezier(.2,.7,.3,1) both}

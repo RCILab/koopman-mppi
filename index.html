@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="icon" href="static/images/icon/RCI_LAB_LOGO.ico">
-<link rel="stylesheet" href="static/css/site.css?v=14">
+<link rel="stylesheet" href="static/css/site.css?v=15">
 
 <!-- Scholarly metadata -->
 <meta name="citation_title" content="Linear or Bilinear: A Criterion for Koopman Rollouts in Sampling-Based Predictive Control">
@@ -39,6 +39,7 @@
       <a href="#demo">Demos</a>
       <a href="#contributions">Contributions</a>
       <a href="#criterion">Criterion</a>
+      <a href="#method">Method</a>
       <a href="#results">Results</a>
       <a href="#params">Parameters</a>
       <a href="#bibtex">Cite</a>
@@ -199,8 +200,43 @@
   </div>
 </section>
 
+<!-- ============================ METHOD ============================ -->
+<section class="section section--soft" id="method">
+  <div class="wrap">
+    <span class="eyebrow">Method</span>
+    <h2>One lifting, two rollouts</h2>
+    <p class="lead">Koopman lifts the state through a dictionary into <i>z</i> = Ψ(<i>x</i>), and MPPI rolls thousands of sampled input sequences through the lifted model. The whole question is how the input <i>u</i> enters that rollout.</p>
+
+    <div class="eqrow">
+      <div class="eqcard eqcard--lin reveal">
+        <div class="eqlabel">Linear rollout</div>
+        <div class="eq">z<sup>+</sup> = <b>A</b> z + <b>B</b> u</div>
+        <p>One constant input matrix <b>B</b> for every configuration, the convention inherited from convex Koopman MPC.</p>
+      </div>
+      <div class="eqcard eqcard--bi reveal">
+        <div class="eqlabel">Bilinear rollout · ours</div>
+        <div class="eq">z<sup>+</sup> = <b>A</b> z + <b>B</b><sub>0</sub> u + Σ<sub>i</sub> u<sub>i</sub> (<b>B</b><sub>i</sub> z)</div>
+        <p>The input also multiplies the lifted state, so the input response changes with configuration.</p>
+      </div>
+    </div>
+
+    <p class="methodnote">The tracked output is read back linearly, <i>y</i> = <b>C</b><sub>h</sub> <i>z</i>. Writing <b>M</b>(<i>u</i>) = <b>A</b> + Σ<sub>i</sub> u<sub>i</sub> <b>B</b><sub>i</sub>, the bilinear step becomes <i>z</i><sup>+</sup> = <b>M</b>(<i>u</i>) <i>z</i> + <b>B</b><sub>0</sub> <i>u</i>: only <i>m</i>+1 matrix–vector products, the same rollout regime as the linear model. Both are identified from data by least squares or a jointly trained deep dictionary, and the bilinear form simply adds the products <i>u<sub>i</sub> z</i> to the regressor. When the input gain varies over the operating region no constant <b>B</b> can match it, a bound that holds for any dictionary, so the bilinear term is necessary; when the gain is nearly constant the two coincide.</p>
+
+    <div class="algo reveal">
+      <div class="algo__title">Bilinear Koopman MPPI · one control step</div>
+      <ol>
+        <li>Lift the current state once, <i>z</i><sub>0</sub> = Ψ(<i>x</i>).</li>
+        <li>Sample <i>K</i> input sequences <i>V</i><sup>(k)</sup> = <i>U</i> + <i>ε</i><sup>(k)</sup>, with <i>ε</i> ∼ 𝒩(0, Σ).</li>
+        <li>Roll each through the bilinear model <i>z</i><sup>+</sup> = <b>M</b>(<i>v</i>) <i>z</i> + <b>B</b><sub>0</sub> <i>v</i>, accumulating the trajectory cost <i>S</i>(<i>V</i><sup>(k)</sup>).</li>
+        <li>Update the plan: <i>u<sub>t</sub></i> ← <i>u<sub>t</sub></i> + (Σ<sub>k</sub> <i>w</i><sup>(k)</sup> <i>ε<sub>t</sub></i><sup>(k)</sup>) ∕ (Σ<sub>j</sub> <i>w</i><sup>(j)</sup>), &nbsp;<i>w</i><sup>(k)</sup> = exp(−(<i>S</i><sup>(k)</sup> − <i>ρ</i>) ∕ <i>λ</i>).</li>
+        <li>Apply <i>u</i><sub>0</sub>, shift <i>U</i>, and warm-start the next control step.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
 <!-- ============================ RESULTS ============================ -->
-<section class="section section--soft" id="results">
+<section class="section" id="results">
   <div class="wrap">
     <span class="eyebrow">Results</span>
     <h2>Six systems, one dividing line</h2>
@@ -307,7 +343,7 @@
 </section>
 
 <!-- ============================ PARAMETERS ============================ -->
-<section class="section" id="params">
+<section class="section section--soft" id="params">
   <div class="wrap">
     <span class="eyebrow">Reproducibility</span>
     <h2>Experiment parameters</h2>
@@ -344,7 +380,7 @@
 </section>
 
 <!-- ============================ BIBTEX ============================ -->
-<section class="section section--soft" id="bibtex">
+<section class="section" id="bibtex">
   <div class="wrap">
     <span class="eyebrow">Citation</span>
     <h2 style="margin-bottom:24px">BibTeX</h2>

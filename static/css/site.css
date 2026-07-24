@@ -63,10 +63,10 @@ h1,h2,h3,h4{color:var(--ink);line-height:1.2;letter-spacing:-.01em;margin:0}
   background:rgba(255,255,255,.82);backdrop-filter:saturate(180%) blur(14px);
   border-bottom:1px solid var(--line-soft);
 }
-.nav__inner{max-width:1180px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:20px}
+.nav__inner{max-width:1180px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;justify-content:center;gap:20px}
 .nav__brand{font-weight:800;color:var(--ink);font-size:15.5px;letter-spacing:-.01em;white-space:nowrap}
 .nav__brand span{color:var(--brand)}
-.nav__links{display:flex;gap:26px;margin-left:auto}
+.nav__links{display:flex;gap:26px}
 .nav__links a{color:var(--muted);font-size:14.5px;font-weight:600}
 .nav__links a:hover{color:var(--ink)}
 .nav__gh{display:inline-flex;align-items:center;color:var(--ink)}
@@ -292,6 +292,25 @@ table.tbl td .mono{font-family:var(--mono);font-size:13.5px}
 
 /* command class on demo headings */
 .cmd{font-size:12.5px;font-weight:700;letter-spacing:.01em;padding:4px 12px;border-radius:999px;background:var(--bg-soft);color:var(--muted);border:1px solid var(--line);text-transform:none;white-space:nowrap}
+
+/* ---- centered page layout (all sections) ---- */
+.section .eyebrow{display:block;text-align:center}
+.section h2{text-align:center}
+.lead{margin-left:auto;margin-right:auto;text-align:center}
+.prose{margin-left:auto;margin-right:auto}
+.prose p{text-align:center}
+.demoblock__head{text-align:center}
+.demoblock__head h3{justify-content:center}
+.demoblock__head p{margin-left:auto;margin-right:auto;text-align:center}
+.demogroup{text-align:center}
+.contrib__title{text-align:center}
+.contriblist{margin-left:auto;margin-right:auto}
+.critcard{text-align:center}
+.critcard .tag{display:block}
+.critcard p{text-align:center}
+.structnote{text-align:center}
+.tblnote{text-align:center}
+.paramnote{justify-content:center}
 
 /* reveal-on-scroll — content is always visible; .in only adds a gentle entrance */
 .reveal{opacity:1}

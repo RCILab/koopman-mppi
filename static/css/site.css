@@ -49,6 +49,7 @@ h1,h2,h3,h4{color:var(--ink);line-height:1.2;letter-spacing:-.01em;margin:0}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
 .section{padding:76px 0}
 .section--soft{background:var(--bg-soft);border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+#abstract{border-bottom:1px solid var(--line)}
 .eyebrow{
   display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:.14em;
   text-transform:uppercase;color:var(--brand);margin-bottom:14px;

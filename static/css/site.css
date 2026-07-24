@@ -204,9 +204,7 @@ table.tbl td.sys{font-weight:700;color:var(--ink)}
 .syssub{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:2px;letter-spacing:.01em}
 table.tbl td .mono{font-family:var(--mono);font-size:13.5px}
 .val{font-family:var(--mono);font-size:13.5px}
-.val.o{color:var(--oracle);font-weight:700}
-.val.l{color:var(--linear);font-weight:700}
-.val.b{color:var(--ours);font-weight:700}
+.val.o,.val.l,.val.b{color:var(--ink);font-weight:700}
 .tblnote{font-size:13.5px;color:var(--muted);margin-top:14px}
 .badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px}
 .badge.need{background:#fdecec;color:#c13636}
@@ -257,13 +255,13 @@ table.tbl td .mono{font-family:var(--mono);font-size:13.5px}
 .tagpill.need{background:#eef3ff;color:var(--brand-deep)}
 .tagpill.ok{background:#e9f7ef;color:#0f8a43}
 .triptych{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.tri{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm)}
-.tri img{width:100%;display:block;background:#fff}
-.tri__lab{font-size:13px;font-weight:700;text-align:center;padding:9px 4px;border-top:1px solid var(--line-soft);display:flex;align-items:center;justify-content:center;gap:7px}
+.tri{background:none;border:none;border-radius:0;box-shadow:none}
+.tri img{width:100%;display:block;background:#fff;border-radius:6px}
+.tri__lab{font-size:14.5px;font-weight:700;text-align:center;padding:11px 4px 0;border-top:none;display:flex;align-items:center;justify-content:center;gap:8px}
 .tri__lab::before{content:"";width:11px;height:11px;border-radius:50%;background:var(--c,#999)}
-.tri__lab.ours{--c:var(--ours);color:var(--ours)}
-.tri__lab.oracle{--c:var(--oracle);color:var(--oracle)}
-.tri__lab.linear{--c:var(--linear);color:var(--linear)}
+.tri__lab.oracle{--c:#4d4d4d;color:#4d4d4d}
+.tri__lab.linear{--c:#EFB118;color:#EFB118}
+.tri__lab.ours{--c:#4C8BF5;color:#4C8BF5}
 .soloimg{border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm);background:#fff}
 .soloimg img{width:100%;display:block}
 .structnote{margin-top:38px;background:var(--brand-tint);border:1px solid rgba(47,109,246,.18);border-radius:var(--radius);padding:20px 24px;font-size:15.5px;color:var(--ink)}

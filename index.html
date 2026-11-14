@@ -4,20 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Linear or Bilinear: A Criterion for Koopman Rollouts in Sampling-Based Predictive Control</title>
-<meta name="description" content="A system-level criterion for when a Koopman-MPPI rollout must be bilinear rather than linear. Bilinear Koopman MPPI tracks with near-oracle accuracy where the linear rollout fails structurally, at the same matrix-vector cost.">
+<meta name="description" content="A criterion for when the states a task visits rule out a constant input matrix in Koopman MPPI rollouts. Where the input gain varies strongly, linear rollouts fail and a bilinear rollout stays close to the true-model oracle. Where it varies little, the linear rollout is not ruled out, but a closed-loop test must still confirm it.">
 <meta name="keywords" content="MPPI, Koopman operator, bilinear systems, sampling-based MPC, model predictive path integral, robot learning">
 <meta name="author" content="Kangmin Lee, Sanghyun Kim">
 
 <!-- Open Graph / social -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Linear or Bilinear: A Criterion for Koopman Rollouts in Sampling-Based Predictive Control">
-<meta property="og:description" content="When must a Koopman-MPPI rollout be bilinear rather than linear? A criterion, and a controller built around it.">
+<meta property="og:description" content="When do the states a task visits rule out a constant input matrix in a Koopman MPPI rollout? A criterion, and closed-loop tests of linear and bilinear rollouts.">
 <meta property="og:url" content="https://rcilab.github.io/koopman-mppi">
-<meta property="og:image" content="static/images/figures/social_preview.png">
+<meta property="og:image" content="https://rcilab.github.io/koopman-mppi/static/images/figures/social_preview.png?v=2">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="icon" href="static/images/icon/RCI_LAB_LOGO.ico">
-<link rel="stylesheet" href="static/css/site.css?v=15">
+<link rel="stylesheet" href="static/css/site.css?v=16">
 
 <!-- Scholarly metadata -->
 <meta name="citation_title" content="Linear or Bilinear: A Criterion for Koopman Rollouts in Sampling-Based Predictive Control">
@@ -66,7 +66,7 @@
     </div>
 
     <div class="btns">
-      <a class="btn btn--primary" href="static/pdfs/paper.pdf" target="_blank" rel="noopener">
+      <a class="btn btn--primary" href="static/pdfs/paper.pdf?v=2" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm8 1.5V8h4.5L14 3.5ZM8 12h8v1.5H8V12Zm0 3.5h8V17H8v-1.5Z"/></svg>
         Paper (PDF)
       </a>
@@ -86,11 +86,11 @@
 <section class="section" id="abstract">
   <div class="wrap">
     <span class="eyebrow">Abstract</span>
-    <h2 style="margin-bottom:24px">The convention, and the criterion</h2>
+    <h2 style="margin-bottom:24px">A constant input matrix, and a criterion</h2>
     <div class="prose">
-      <p>Koopman operator models let sampling-based <strong>Model Predictive Path Integral (MPPI)</strong> control roll out thousands of sampled input sequences through an inexpensive learned lifted model. Existing Koopman-MPPI, however, keeps that lifted model <strong>linear in the input</strong>, a convention inherited from convex Koopman MPC that sampling never required. It fixes one input response for every configuration, and no criterion says when that is enough.</p>
-      <p>This paper supplies the criterion and builds the controller around it. When the <strong>configuration-dependent gain</strong> through which the input reaches the tracked output varies appreciably over the operating region, no constant input matrix can match it under the standard linear readout, no state dictionary repairs the mismatch, and a <strong>bilinear</strong> lift becomes necessary. When the gain is nearly constant, the two lifts predict alike. Since a bilinear step stays in the same matrix–vector cost regime either way, the criterion makes the bilinear model the <strong>default rollout</strong>.</p>
-      <p>Each sample's cost carries an online error tube from a proportional identification bound, and a free-energy analysis supplies a practical-stability guarantee. Across six systems, bilinear Koopman MPPI tracks with near-oracle accuracy on a wheeled vehicle and a drone under body-frame velocity commands, where its linear counterpart fails structurally. On force- and acceleration-driven platforms the two rollouts perform alike and bilinearity keeps mainly a parameter-efficiency advantage, which explains the successes reported for linear Koopman control.</p>
+      <p>Koopman operator models let sampling-based <strong>Model Predictive Path Integral (MPPI)</strong> control roll out thousands of sampled input sequences through an inexpensive learned lifted model. Recent Koopman MPPI controllers, however, keep a <strong>constant input matrix</strong>, which suits convex Koopman MPC but is not needed for sampling. It fixes a single gain from the input to the tracked output, yet for many robots the true gain changes with heading or attitude.</p>
+      <p>This paper supplies a <strong>criterion</strong> for when the states a task visits rule out such a matrix. If the output is read linearly from the lifted state, the largest gap between the predicted and true gains over those states is at least half the true gain's variation. This holds for any lifting features and extends to every horizon step, but the criterion says nothing when the input moves the output only through acceleration or higher derivatives.</p>
+      <p>Where the gain varies strongly, as for a freely turning unicycle or a drone over a wide yaw range, linear rollouts fail. A <strong>bilinear</strong> rollout, whose input matrix instead depends on the lifted state, stays close to the true-model oracle in both tasks. Its MPPI update needs less than twice the time of a linear one. Where the gain varies little, the linear rollout is less accurate than the bilinear one in most of our tests but can remain within the task tolerance. Yet passing the criterion is not enough. In a pendulum swing-up without gain variation, linear models of matching width fail under every MPPI setting tested, while bilinear models succeed under most and the oracle under all. The cheaper linear rollout is therefore worth trying at small gain variation, but a <strong>closed-loop test</strong> must still confirm that it works for a given task.</p>
     </div>
 
   </div>
@@ -100,46 +100,20 @@
 <section class="section" id="demo">
   <div class="wrap">
     <span class="eyebrow">See the criterion in action</span>
-    <h2>Same lifting, two rollouts</h2>
-    <p class="lead">The linear baseline and the bilinear controller share one deep Koopman lifting with identical network, training data, and multi-step loss. They differ only in the rollout equation. Whether that single change matters is a property of the robot, not the optimizer.</p>
+    <h2>Same training, two rollouts</h2>
+    <p class="lead">The linear and bilinear models are trained independently with the same network architecture, data, multi-step loss, and training schedule, and they run in the same MPPI with the same settings and noise realizations. They differ only in how the input enters the rollout. The oracle rolls out the true dynamics.</p>
 
-    <div class="demogroup"><span class="grouplabel ok">Linear ≈ bilinear: the gain barely varies</span></div>
-
-    <!-- Quadrotor (thrust) -->
-    <div class="demoblock reveal">
-      <div class="demoblock__head">
-        <h3>Thrust-driven quadrotor, fly-to-goal <span class="cmd">thrust command</span></h3>
-      </div>
-      <div class="triptych">
-        <div class="tri"><img src="static/gifs/fig_quad_oracle.gif" alt="Quadrotor fly-to-goal — oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
-        <div class="tri"><img src="static/gifs/fig_quad_linear.gif" alt="Quadrotor fly-to-goal — linear" loading="lazy"><div class="tri__lab linear">Linear</div></div>
-        <div class="tri"><img src="static/gifs/fig_quad_bilinear.gif" alt="Quadrotor fly-to-goal — bilinear" loading="lazy"><div class="tri__lab ours">Bilinear</div></div>
-      </div>
-    </div>
-
-    <!-- Soft arm -->
-    <div class="demoblock reveal">
-      <div class="demoblock__head">
-        <h3>Cable-driven soft arm, reaching <span class="cmd">cable command</span></h3>
-      </div>
-      <div class="triptych">
-        <div class="tri"><img src="static/gifs/fig_soft_oracle.gif" alt="Soft arm — oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
-        <div class="tri"><img src="static/gifs/fig_soft_linear.gif" alt="Soft arm — linear" loading="lazy"><div class="tri__lab linear">Linear</div></div>
-        <div class="tri"><img src="static/gifs/fig_soft_bilinear.gif" alt="Soft arm — bilinear" loading="lazy"><div class="tri__lab ours">Bilinear</div></div>
-      </div>
-    </div>
-
-    <div class="demogroup"><span class="grouplabel need">Bilinear necessary: the gain sweeps its range</span></div>
+    <div class="demogroup"><span class="grouplabel need">Linear ruled out: the gain varies strongly</span></div>
 
     <!-- Unicycle (velocity) -->
     <div class="demoblock reveal">
       <div class="demoblock__head">
-        <h3>Nonholonomic parking <span class="cmd">velocity command</span></h3>
+        <h3>Unicycle, drive to goal <span class="cmd">velocity command</span></h3>
       </div>
       <div class="triptych">
-        <div class="tri"><img src="static/gifs/fig_uni_oracle.gif" alt="Unicycle parking — oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
-        <div class="tri"><img src="static/gifs/fig_uni_linear.gif" alt="Unicycle parking — linear" loading="lazy"><div class="tri__lab linear">Linear</div></div>
-        <div class="tri"><img src="static/gifs/fig_uni_bilinear.gif" alt="Unicycle parking — bilinear" loading="lazy"><div class="tri__lab ours">Bilinear</div></div>
+        <div class="tri"><img src="static/gifs/fig_uni_oracle.gif?v=4" alt="Unicycle drive to goal, oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
+        <div class="tri"><img src="static/gifs/fig_uni_linear.gif?v=4" alt="Unicycle drive to goal, linear" loading="lazy"><div class="tri__lab linear">Linear</div></div>
+        <div class="tri"><img src="static/gifs/fig_uni_bilinear.gif?v=4" alt="Unicycle drive to goal, bilinear" loading="lazy"><div class="tri__lab ours">Bilinear</div></div>
       </div>
     </div>
 
@@ -149,14 +123,42 @@
         <h3>Body-velocity drone, figure-8 <span class="cmd">velocity command</span></h3>
       </div>
       <div class="triptych">
-        <div class="tri"><img src="static/gifs/fig_drone_oracle.gif" alt="Drone figure-8 — oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
-        <div class="tri"><img src="static/gifs/fig_drone_linear.gif" alt="Drone figure-8 — linear" loading="lazy"><div class="tri__lab linear">Linear</div></div>
-        <div class="tri"><img src="static/gifs/fig_drone_bilinear.gif" alt="Drone figure-8 — bilinear" loading="lazy"><div class="tri__lab ours">Bilinear</div></div>
+        <div class="tri"><img src="static/gifs/fig_drone_oracle.gif?v=3" alt="Drone figure-8, oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
+        <div class="tri"><img src="static/gifs/fig_drone_linear.gif?v=3" alt="Drone figure-8, linear" loading="lazy"><div class="tri__lab linear">Linear</div></div>
+        <div class="tri"><img src="static/gifs/fig_drone_bilinear.gif?v=3" alt="Drone figure-8, bilinear" loading="lazy"><div class="tri__lab ours">Bilinear</div></div>
+      </div>
+    </div>
+
+    <div class="demogroup"><span class="grouplabel ok">Linear not ruled out: the gain varies little</span></div>
+
+    <!-- Quadrotor (thrust) -->
+    <div class="demoblock reveal">
+      <div class="demoblock__head">
+        <h3>Thrust-driven quadrotor, fly-to-goal <span class="cmd">thrust command</span></h3>
+      </div>
+      <div class="triptych">
+        <div class="tri"><img src="static/gifs/fig_quad_oracle.gif?v=4" alt="Quadrotor fly-to-goal, oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
+        <div class="tri"><img src="static/gifs/fig_quad_linear.gif?v=4" alt="Quadrotor fly-to-goal, linear" loading="lazy"><div class="tri__lab linear">Linear</div></div>
+        <div class="tri"><img src="static/gifs/fig_quad_bilinear.gif?v=4" alt="Quadrotor fly-to-goal, bilinear" loading="lazy"><div class="tri__lab ours">Bilinear</div></div>
+      </div>
+    </div>
+
+    <div class="demogroup"><span class="grouplabel warn">Not ruled out, yet linear fails at matching width</span></div>
+
+    <!-- Pendulum (torque) -->
+    <div class="demoblock reveal">
+      <div class="demoblock__head">
+        <h3>Torque-limited pendulum, swing-up and hold <span class="cmd">torque command</span></h3>
+      </div>
+      <div class="triptych">
+        <div class="tri"><img src="static/gifs/fig_pend_oracle.gif?v=3" alt="Pendulum swing-up and hold, oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
+        <div class="tri"><img src="static/gifs/fig_pend_linear.gif?v=3" alt="Pendulum swing-up and hold, linear" loading="lazy"><div class="tri__lab linear">Linear</div></div>
+        <div class="tri"><img src="static/gifs/fig_pend_bilinear.gif?v=3" alt="Pendulum swing-up and hold, bilinear" loading="lazy"><div class="tri__lab ours">Bilinear</div></div>
       </div>
     </div>
 
     <div class="structnote reveal">
-      <b>The failure is structural, not a lack of capacity.</b> The linear rollout shares the bilinear model's network, data, and loss, and neither a larger lift nor a generic MLP closes the gap. When the input gain sweeps its range no constant input matrix can match it, and when the gain is nearly constant the two rollouts coincide. The dividing line belongs to the robot, not the optimizer.
+      <b>The criterion is a necessary condition.</b> When the input gain varies strongly over the visited states, no constant input matrix can match it under a linear readout, whatever the lifting features, and a larger linear lift does not help. When the gain varies little, the linear rollout is not ruled out and can meet the task tolerance, as in the graded drone study. The pendulum shows that passing the test is not enough, so a closed-loop test decides.
     </div>
   </div>
 </section>
@@ -168,10 +170,9 @@
     <span class="eyebrow">Contributions</span>
     <h2>What the paper adds</h2>
     <ol class="contriblist reveal" style="margin-top:30px">
-      <li><b>A criterion for the rollout.</b> A system-level test, the normalized gain variation <span class="mv">ν̂</span>, that decides when a Koopman-MPPI rollout <em>must</em> be bilinear and when a linear rollout suffices, as a property of the system rather than the optimizer.</li>
-      <li><b>Bilinear as the default.</b> A bilinear Koopman MPPI controller built around the criterion, staying in the same matrix–vector rollout regime as the linear baseline (m+1 products per step, ~3.9 ms for K=1024).</li>
-      <li><b>Certified sample costs.</b> An online error tube from a proportional identification bound carried in each sample's cost, with a free-energy practical-stability guarantee (0 violations over 82,000 held-out steps).</li>
-      <li><b>Evidence across six systems.</b> The criterion is validated from velocity-commanded vehicles and drones, where the linear rollout fails structurally, to thrust- and force-driven platforms and soft arms, where the two rollouts coincide.</li>
+      <li><b>A necessary condition for a constant input matrix.</b> With a linear readout, a linear lifted model has one input gain everywhere. Over the states a task visits, its worst-case gain error is then at least half the gain variation <span class="mv">ν<sub>Φ</sub></span>, at every horizon step and for any dictionary.</li>
+      <li><b>Where the criterion rules linear out.</b> On the unicycle and on a drone with a wide yaw range, linear rollouts fail, while the bilinear one stays near the oracle and needs less than twice the linear MPPI update time. A graded drone study shows that the point of failure depends on the tolerance.</li>
+      <li><b>Where it does not, and its limit.</b> At small variation, the cheaper linear model can meet the tolerance, though the bilinear one is usually more accurate. Passing the test is still not enough. In a pendulum swing-up, linear models fail in all 16 MPPI settings tested, while bilinear models of the same width succeed in 14 and the oracle in all 16. Swapping model components traces the failure to the linear input response.</li>
     </ol>
   </div>
 </section>
@@ -180,21 +181,24 @@
 <section class="section" id="criterion">
   <div class="wrap">
     <span class="eyebrow">The criterion</span>
-    <h2>When is bilinearity necessary?</h2>
-    <p class="lead">The distinction is a property of the <em>system</em>, not the optimizer. It is captured by the normalized variation of the input gain over the operating region.</p>
+    <h2>When is a constant input matrix ruled out?</h2>
+    <p class="lead">Under a linear readout, a linear lifted model predicts the same input gain at every state. Somewhere on the states a task visits, it therefore misses the true gain <span class="mv">Φ</span> by at least half its variation <span class="mv">ν<sub>Φ</sub></span>, whatever the lifting features. The normalized variation <span class="mv">ν̂</span> lies between 0 and 2.</p>
 
+    <div style="text-align:center;margin:4px 0 2px">
+      <img src="static/images/figures/fig_1_legend.png" alt="Legend: true gain (dashed black), linear model (orange), bilinear model (blue)" style="display:inline-block;width:220px;max-width:70%">
+    </div>
     <div class="crit" style="margin-top:8px">
       <div class="critcard critcard--lin reveal">
-        <span class="tag"><span class="mv">ν̂</span> ≈ 0</span>
-        <h3>The gain barely moves</h3>
-        <img src="static/images/figures/fig_1a.png" alt="Nearly constant input gain over the operating region">
-        <p>When the input reaches the output at second order (force, acceleration, torque) or the configuration barely turns, one constant input matrix fits the whole operating region. Linear and bilinear rollouts <strong>predict alike</strong>. This is the regime behind reported linear-Koopman successes.</p>
+        <span class="tag"><span class="mv">ν̂</span> small</span>
+        <h3>A narrow heading range</h3>
+        <img src="static/images/figures/fig_1a.png?v=2" alt="A narrow heading range keeps the input gain nearly constant over the operating set">
+        <p>When the visited headings stay in a narrow range, the input gain stays nearly constant and the bound is small. The criterion does not rule the linear rollout out, and whether it is accurate enough becomes a closed-loop question. If the input reaches the tracked output only through acceleration or higher derivatives, the first-order gain is zero and the criterion says nothing.</p>
       </div>
       <div class="critcard critcard--bi reveal">
         <span class="tag"><span class="mv">ν̂</span> large</span>
-        <h3>The gain sweeps its range</h3>
-        <img src="static/images/figures/fig_1b.png" alt="Input gain sweeping its full range">
-        <p>When a heading or yaw rotates the gain across its full range, <strong>no constant input matrix can match it</strong> under the linear readout, and <strong>no state dictionary repairs it</strong>, since the input matrix stays constant however wide the lift grows. Only a bilinear lift, where the input multiplies the lifted state, tracks the rotation.</p>
+        <h3>A freely turning heading</h3>
+        <img src="static/images/figures/fig_1b.png?v=2" alt="A freely turning heading makes the input gain vary widely over the operating set">
+        <p>When the heading turns freely, the rotation sweeps the gain across its range, and a velocity-commanded vehicle reaches <span class="mv">ν̂</span> = 2. A linear lift is ruled out once the bound exceeds the task tolerance. A larger lift does not help, since the input still multiplies the same constant matrix. A bilinear rollout, whose input matrix depends on the lifted state, can follow the change.</p>
       </div>
     </div>
   </div>
@@ -204,32 +208,32 @@
 <section class="section section--soft" id="method">
   <div class="wrap">
     <span class="eyebrow">Method</span>
-    <h2>One lifting, two rollouts</h2>
-    <p class="lead">Koopman lifts the state through a dictionary into <i>z</i> = Ψ(<i>x</i>), and MPPI rolls thousands of sampled input sequences through the lifted model. The whole question is how the input <i>u</i> enters that rollout.</p>
+    <h2>Two ways for the input to enter</h2>
+    <p class="lead">Koopman methods lift the state through a dictionary into <i>z</i> = Ψ(<i>x</i>), and MPPI rolls thousands of sampled input sequences through the lifted model. The question is how the input <i>u</i> enters that rollout.</p>
 
     <div class="eqrow">
       <div class="eqcard eqcard--lin reveal">
         <div class="eqlabel">Linear rollout</div>
         <div class="eq">z<sup>+</sup> = <b>A</b> z + <b>B</b> u</div>
-        <p>One constant input matrix <b>B</b> for every configuration, the convention inherited from convex Koopman MPC.</p>
+        <p>One constant input matrix <b>B</b> for every state, the form used by recent Koopman MPPI controllers.</p>
       </div>
       <div class="eqcard eqcard--bi reveal">
         <div class="eqlabel">Bilinear rollout</div>
         <div class="eq">z<sup>+</sup> = <b>A</b> z + <b>B</b><sub>0</sub> u + Σ<sub>i</sub> u<sub>i</sub> (<b>B</b><sub>i</sub> z)</div>
-        <p>The input also multiplies the lifted state, so the input response changes with configuration.</p>
+        <p>The input also multiplies the lifted state, so the predicted input gain changes with the state.</p>
       </div>
     </div>
 
-    <p class="methodnote">The tracked output is read back linearly, <i>y</i> = <b>C</b><sub>h</sub> <i>z</i>. Writing <b>M</b>(<i>u</i>) = <b>A</b> + Σ<sub>i</sub> u<sub>i</sub> <b>B</b><sub>i</sub>, the bilinear step becomes <i>z</i><sup>+</sup> = <b>M</b>(<i>u</i>) <i>z</i> + <b>B</b><sub>0</sub> <i>u</i>: only <i>m</i>+1 matrix–vector products, the same rollout regime as the linear model. Both are identified from data by least squares or a jointly trained deep dictionary, and the bilinear form simply adds the products <i>u<sub>i</sub> z</i> to the regressor. When the input gain varies over the operating region no constant <b>B</b> can match it, a bound that holds for any dictionary, so the bilinear term is necessary; when the gain is nearly constant the two coincide.</p>
+    <p class="methodnote">The cost reads the observables back linearly, <i>b</i> = <b>C</b> <i>z</i>. Writing <b>M</b>(<i>u</i>) = <b>A</b> + Σ<sub>i</sub> u<sub>i</sub> <b>B</b><sub>i</sub>, the bilinear step becomes <i>z</i><sup>+</sup> = <b>M</b>(<i>u</i>) <i>z</i> + <b>B</b><sub>0</sub> <i>u</i>, which costs <i>m</i>+1 matrix–vector products against one for the linear model. Its predicted input gain is affine in the lifted state, so it can match the true gain on the visited states exactly when that gain is affine in the lifted features. Each model learns its dictionary jointly with its matrices, and both use the same architecture, data, and multi-step loss.</p>
 
     <div class="algo reveal">
       <div class="algo__title">Bilinear Koopman MPPI · one control step</div>
       <ol>
         <li>Lift the current state once, <i>z</i><sub>0</sub> = Ψ(<i>x</i>).</li>
-        <li>Sample <i>K</i> input sequences <i>V</i><sup>(k)</sup> = <i>U</i> + <i>ε</i><sup>(k)</sup>, with <i>ε</i> ∼ 𝒩(0, Σ).</li>
-        <li>Roll each through the bilinear model <i>z</i><sup>+</sup> = <b>M</b>(<i>v</i>) <i>z</i> + <b>B</b><sub>0</sub> <i>v</i>, accumulating the trajectory cost <i>S</i>(<i>V</i><sup>(k)</sup>).</li>
-        <li>Update the plan: <i>u<sub>t</sub></i> ← <i>u<sub>t</sub></i> + (Σ<sub>k</sub> <i>w</i><sup>(k)</sup> <i>ε<sub>t</sub></i><sup>(k)</sup>) ∕ (Σ<sub>j</sub> <i>w</i><sup>(j)</sup>), &nbsp;<i>w</i><sup>(k)</sup> = exp(−(<i>S</i><sup>(k)</sup> − <i>ρ</i>) ∕ <i>λ</i>).</li>
-        <li>Apply <i>u</i><sub>0</sub>, shift <i>U</i>, and warm-start the next control step.</li>
+        <li>Sample <i>K</i> input sequences <i>v</i><sub><i>t</i></sub><sup>(k)</sup> = <i>P</i><sub>c</sub>(<i>u</i><sub><i>t</i></sub> + <i>ε</i><sub><i>t</i></sub><sup>(k)</sup>), with <i>ε</i> ∼ 𝒩(0, Σ) and <i>P</i><sub>c</sub> the identity or a projection onto the input set.</li>
+        <li>Roll each through the bilinear model <i>z</i><sup>+</sup> = <b>M</b>(<i>v</i>) <i>z</i> + <b>B</b><sub>0</sub> <i>v</i>, accumulating the trajectory cost <i>S</i><sup>(k)</sup> on the predicted observables.</li>
+        <li>Update the plan: <i>u<sub>t</sub></i> ← <i>u<sub>t</sub></i> + (Σ<sub>k</sub> <i>w</i><sup>(k)</sup> <i>ε<sub>t</sub></i><sup>(k)</sup>) ∕ (Σ<sub>j</sub> <i>w</i><sup>(j)</sup>), &nbsp;<i>w</i><sup>(k)</sup> = exp(−(<i>S</i><sup>(k)</sup> − min<sub>j</sub> <i>S</i><sup>(j)</sup>) ∕ <i>λ</i>).</li>
+        <li>Apply <i>u</i><sub>0</sub> projected onto the input set, shift the plan, and warm-start the next control step.</li>
       </ol>
     </div>
   </div>
@@ -239,8 +243,8 @@
 <section class="section" id="results">
   <div class="wrap">
     <span class="eyebrow">Results</span>
-    <h2>Six systems, one dividing line</h2>
-    <p class="lead">Each system is placed by its normalized gain variation <span class="mv">ν̂</span>. Where <span class="mv">ν̂</span> is large the bilinear rollout is decisive; where <span class="mv">ν̂</span> ≈ 0 the two coincide and only a parameter-efficiency edge remains.</p>
+    <h2>Five systems, by gain variation</h2>
+    <p class="lead">Each system is placed by its normalized gain variation <span class="mv">ν̂</span>. Where <span class="mv">ν̂</span> is large, the linear rollout fails and the bilinear one stays close to the oracle. Where <span class="mv">ν̂</span> is small or the criterion is silent, the linear rollout is not ruled out, and the closed-loop outcome depends on the task.</p>
 
     <div class="tablewrap reveal">
       <table class="tbl">
@@ -249,96 +253,89 @@
             <th>System</th>
             <th>Gain variation <span class="mv">ν̂</span></th>
             <th>Closed loop (Oracle / Linear / Bilinear)</th>
-            <th>Prediction: bilinear vs. linear</th>
-            <th></th>
+            <th>Open-loop prediction</th>
+            <th>Criterion</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td class="sys">Unicycle<span class="syssub">velocity command</span></td>
-            <td><span class="mono">R(θ)</span>, maximal (2.0)</td>
-            <td><span class="val o">92</span> / <span class="val l">0</span> / <span class="val b">84</span> &nbsp;% parked</td>
-            <td class="val">42–48×</td>
-            <td><span class="badge need">bilinear</span></td>
+            <td><span class="mono">R(θ)</span>, 2</td>
+            <td><span class="val o">90.8</span> / <span class="val l">0.8</span> / <span class="val b">90.4</span> &nbsp;% success</td>
+            <td>bilinear over 30× more accurate</td>
+            <td><span class="badge need">ruled out</span></td>
           </tr>
           <tr>
             <td class="sys">Drone<span class="syssub">velocity command</span></td>
-            <td><span class="mono">R(ψ)</span>, maximal (2.0)</td>
-            <td><span class="val o">0.05</span> / <span class="val l">1.4</span> / <span class="val b">0.05</span> &nbsp;m</td>
-            <td class="val">135 ± 7×</td>
-            <td><span class="badge need">bilinear</span></td>
-          </tr>
-          <tr>
-            <td class="sys">Pendulum</td>
-            <td>second order (0)</td>
-            <td>—</td>
-            <td class="val">~4× fewer neurons</td>
-            <td><span class="badge ok">alike</span></td>
+            <td><span class="mono">R(ψ)</span>, 1.5–1.9</td>
+            <td><span class="val o">0.046</span> / <span class="val l">1.40</span> / <span class="val b">0.046</span> &nbsp;m</td>
+            <td>bilinear over 100× more accurate</td>
+            <td><span class="badge need">ruled out</span></td>
           </tr>
           <tr>
             <td class="sys">Quadrotor<span class="syssub">thrust command</span></td>
-            <td>second order (0)</td>
-            <td><span class="val o">0.12</span> / <span class="val l">0.44</span> / <span class="val b">0.45</span> &nbsp;m</td>
-            <td class="val">1.0–1.1×</td>
-            <td><span class="badge ok">alike</span></td>
+            <td>position: second order<br>velocity: 0.27</td>
+            <td><span class="val o">20</span> of 20 / <span class="val l">34</span> of 60 / <span class="val b">50</span> of 60 &nbsp;reach 0.12 m</td>
+            <td>depends on channel and horizon</td>
+            <td><span class="badge ok">not ruled out</span></td>
           </tr>
           <tr>
-            <td class="sys">Torque arm</td>
-            <td>second order, inertia (0)</td>
-            <td>—</td>
-            <td class="val">0.88–0.98×</td>
-            <td><span class="badge ok">alike</span></td>
+            <td class="sys">Torque arm<span class="syssub">torque command</span></td>
+            <td>second order</td>
+            <td>prediction only</td>
+            <td>end effector: linear input-response error 3–10× the bilinear<br>joint angles: small for both</td>
+            <td><span class="badge neutral">silent</span></td>
           </tr>
           <tr>
-            <td class="sys">Soft arm</td>
-            <td>low (curvature)</td>
-            <td>—</td>
-            <td class="val">0.93–1.09×</td>
-            <td><span class="badge ok">alike</span></td>
+            <td class="sys">Pendulum<span class="syssub">torque command</span></td>
+            <td>0</td>
+            <td><span class="val o">16</span> / <span class="val l">0</span> / <span class="val b">14</span> &nbsp;of 16 settings</td>
+            <td>linear error over 30% larger</td>
+            <td><span class="badge ok">not ruled out</span></td>
           </tr>
         </tbody>
       </table>
     </div>
-    <p class="tblnote">Closed-loop entries: parking rate (unicycle), mean tracking error (drone), median goal distance (quadrotor). A prediction ratio near 1× means the two rollouts coincide; dashed rows are evaluated through prediction. Oracle rolls out the true dynamics and is not a performance ceiling.</p>
+    <p class="tblnote">Closed-loop entries: success rate over 250 trials per controller (unicycle), mean tracking error over 60 episodes (drone), trials that come within 0.12 m of the goal (quadrotor), and MPPI settings in which the class succeeds, with both learned classes at width 64 (pendulum). On the quadrotor, the bilinear model reaches the goal more often for only three of five data sets, and the gap is not attributed to a state-dependent gain. On the pendulum, wider linear models (width 256) succeed in the four settings with a 65-step swing-up horizon. "Second order" means the input reaches the output only through acceleration, so the criterion is silent for it.</p>
 
-    <!-- plots -->
-    <div class="plots" style="margin-top:40px">
-      <div class="plotcard reveal">
-        <h4>Drone: open-loop prediction</h4>
-        <p>World-position error over the planning horizon (log scale). The gap is structural: doubling the linear lift's dimension does not close it.</p>
-        <img src="static/images/figures/paper_drone_pred.png" alt="Drone prediction error vs horizon">
-      </div>
-      <div class="plotcard reveal">
-        <h4>Pendulum: efficiency where coupling is weak</h4>
-        <p>Even when bilinearity is not <em>required</em>, the structured input term substitutes for network width, matching linear accuracy with ~4× fewer neurons.</p>
-        <img src="static/images/figures/paper_pendulum.png" alt="Pendulum error vs hidden neurons">
-      </div>
-      <div class="plotcard reveal">
-        <h4>Quadrotor: the boundary</h4>
-        <p>Thrust reaches position only through acceleration, so despite ±69° tilts the linear and bilinear predictions coincide on full state and velocity alike.</p>
-        <img src="static/images/figures/paper_quad.png" alt="Quadrotor prediction error vs horizon">
-      </div>
-      <div class="plotcard reveal">
-        <h4>Error tube: 0 violations / 82,000 steps</h4>
-        <p>Each sample's cost carries an online error tube from a proportional identification bound. It contains the true lifted error at every held-out step.</p>
-        <img src="static/images/figures/paper_tube.png" alt="Certified error tube vs true error">
-      </div>
-    </div>
-
-    <!-- baselines table -->
-    <h3 style="font-size:20px;margin:48px 0 8px;text-align:center">Ruling out capacity</h3>
-    <p class="lead" style="margin-bottom:22px">Open-loop 15-step world-position error on the drone, mean ± s.d. over ten training runs on a shared 1,000-trajectory held-out set. A larger linear lift and a generic MLP both miss the rotation the bilinear lift represents exactly.</p>
-    <div class="tablewrap reveal" style="max-width:560px;margin-left:auto;margin-right:auto">
+    <!-- graded study -->
+    <h3 style="font-size:20px;margin:48px 0 8px;text-align:center">Graded gain variation</h3>
+    <p class="lead" style="margin-bottom:22px">The drone's yaw range sets <span class="mv">ν̂</span> = 2 sin <span class="mv">ψ̄</span> (2 beyond <span class="mv">ψ̄</span> = π/2). The linear open-loop error grows with it and stays within 2% of a constant-gain least-squares predictor, while the bilinear error stays below 0.006 m. In closed loop, the bilinear controller's mean tracking error is within 0.006 m of the oracle's in every episode. All linear episodes succeed up to <span class="mv">ν̂</span> = 0.40, 0.96, or 1.43 for tolerances of 0.10, 0.15, or 0.25 m. The criterion bounds the one-step input-response error, not the tracking error, so it does not predict these levels.</p>
+    <div class="tablewrap reveal" style="max-width:720px;margin-left:auto;margin-right:auto">
       <table class="tbl" style="min-width:0">
-        <thead><tr><th>Rollout model</th><th>Latent N</th><th>Prediction error (m)</th></tr></thead>
+        <thead><tr><th><span class="mv">ψ̄</span> (rad)</th><th><span class="mv">ν̂</span></th><th>Linear (m)</th><th>LS error (m)</th><th>Bilinear (m)</th><th>Linear success</th></tr></thead>
         <tbody>
-          <tr><td class="sys">Linear</td><td class="val">13</td><td class="val l">0.409 ± 0.001</td></tr>
-          <tr><td class="sys">Linear (large)</td><td class="val">29</td><td class="val l">0.409 ± 0.001</td></tr>
-          <tr><td class="sys">MLP dynamics</td><td class="val">—</td><td class="val">0.078 ± 0.017</td></tr>
-          <tr><td class="sys">Bilinear</td><td class="val">13</td><td class="val b">0.0030 ± 0.0001</td></tr>
+          <tr><td class="val">0</td><td class="val">0</td><td class="val l">0.0014</td><td class="val">0.0014</td><td class="val b">0.0010</td><td class="val">15/15</td></tr>
+          <tr><td class="val">0.2</td><td class="val">0.40</td><td class="val l">0.041</td><td class="val">0.041</td><td class="val b">0.0015</td><td class="val">15/15</td></tr>
+          <tr><td class="val">0.5</td><td class="val">0.96</td><td class="val l">0.098</td><td class="val">0.098</td><td class="val b">0.0054</td><td class="val">15/15</td></tr>
+          <tr><td class="val">0.8</td><td class="val">1.43</td><td class="val l">0.153</td><td class="val">0.155</td><td class="val b">0.0023</td><td class="val">5/15</td></tr>
+          <tr><td class="val">1.2</td><td class="val">1.86</td><td class="val l">0.221</td><td class="val">0.223</td><td class="val b">0.0013</td><td class="val">0/15</td></tr>
+          <tr><td class="val">π/2</td><td class="val">2</td><td class="val l">0.279</td><td class="val">0.281</td><td class="val b">0.0010</td><td class="val">0/15</td></tr>
+          <tr><td class="val">π</td><td class="val">2</td><td class="val l">0.409</td><td class="val">0.411</td><td class="val b">0.0031</td><td class="val">0/15</td></tr>
         </tbody>
       </table>
     </div>
+    <p class="tblnote">Open-loop position errors at 15 steps, means over five training runs per class. LS is a constant-gain least-squares predictor. Linear success counts episodes within the 0.15 m tolerance over five models and three references.</p>
+
+    <!-- rollout classes -->
+    <h3 style="font-size:20px;margin:48px 0 8px;text-align:center">Other rollout classes</h3>
+    <p class="lead" style="margin-bottom:22px">Every class gets the same data, training budget, and MPPI. A larger linear lift does not help. On the drone, the rollouts with a state-dependent input gain come within 7% of the oracle, except a decoder whose training collapsed. On the unicycle, only the bilinear model and the neural model with clamped inputs come close, the latter at one to two orders of magnitude more operations per step.</p>
+    <div class="tablewrap reveal" style="max-width:860px;margin-left:auto;margin-right:auto">
+      <table class="tbl" style="min-width:600px">
+        <thead><tr><th>Rollout model</th><th>Unicycle success (%)<br>unclamped / clamped</th><th>Drone tracking error (m)</th><th>Operations per step<br>unicycle / drone</th></tr></thead>
+        <tbody>
+          <tr><td class="sys">Linear</td><td class="val l">0.8 / 1.3</td><td class="val l">1.40 ± 0.89</td><td class="val">80 / 221</td></tr>
+          <tr><td class="sys">Linear, N = 29</td><td class="val">—</td><td class="val">1.38 ± 0.95</td><td class="val">— / 957</td></tr>
+          <tr><td class="sys">Linear + decoder (γ = 0)</td><td class="val">22.4 / 53.3</td><td class="val">0.049 ± 0.011</td><td class="val">4944 / 5469</td></tr>
+          <tr><td class="sys">Linear + decoder (γ = 0.1)</td><td class="val">15.6 / 58.0</td><td class="val">training collapsed (9 of 10 runs)</td><td class="val">4944 / 5469</td></tr>
+          <tr><td class="sys">Frozen bilinear</td><td class="val">28.8 / 28.7</td><td class="val">0.048 ± 0.011</td><td class="val">80 / 221</td></tr>
+          <tr><td class="sys">Neural dynamics</td><td class="val">53.6 / 100</td><td class="val">0.046 ± 0.009</td><td class="val">17,408 / 17,792</td></tr>
+          <tr><td class="sys">Bilinear</td><td class="val b">90.4 / 100</td><td class="val b">0.046 ± 0.009</td><td class="val">208 / 897</td></tr>
+          <tr><td class="sys">Oracle (true model)</td><td class="val o">90.8 / 100</td><td class="val o">0.046 ± 0.009</td><td class="val">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tblnote">Operations are multiply–accumulate operations per rollout step. "Clamped" restricts the candidates to the training input range. The frozen model holds the bilinear input matrix at the current state over the horizon.</p>
   </div>
 </section>
 
@@ -347,7 +344,7 @@
   <div class="wrap">
     <span class="eyebrow">Reproducibility</span>
     <h2>Experiment parameters</h2>
-    <p class="lead">Key per-system MPPI hyperparameters, shared by the bilinear controller and the linear baseline. Method-specific choices follow the linear baseline's reported settings.</p>
+    <p class="lead">Key per-system MPPI settings, shared by the linear and bilinear controllers. No parameter was tuned separately for either learned model.</p>
 
     <div class="tablewrap reveal">
       <table class="tbl">
@@ -371,10 +368,10 @@
     </div>
 
     <div class="paramnote">
-      <div class="pn"><b>Simulators.</b> Unicycle &amp; drone kinematic · pendulum analytical · quadrotor &amp; torque arm in MuJoCo · soft continuum arm in SoftManiSim</div>
-      <div class="pn"><b>Protocol.</b> Unicycle 50 parking trials · drone 60 episodes · quadrotor 20 runs</div>
-      <div class="pn"><b>Rollout cost.</b> m+1 matrix–vector products per step vs. 1 for linear, the same cost regime</div>
-      <div class="pn"><b>Timing (CPU, 4 threads).</b> 3.9 ms bilinear vs. 13 ms true-dynamics vs. 76 ms physics-engine rollout</div>
+      <div class="pn"><b>Simulators.</b> Unicycle &amp; drone kinematic · pendulum analytical · quadrotor &amp; torque arm in MuJoCo</div>
+      <div class="pn"><b>Protocol.</b> Unicycle 250 trials per controller · drone 60 episodes · quadrotor 60 trials (oracle 20) · pendulum 16 MPPI settings, 10 trials per model</div>
+      <div class="pn"><b>Rollout cost.</b> m+1 matrix–vector products per step vs. 1 for linear</div>
+      <div class="pn"><b>Timing (one CPU thread).</b> One bilinear MPPI update takes 4.9 / 2.4 / 5.8 / 6.4 ms vs. 3.5 / 1.3 / 4.1 / 3.6 ms for linear (unicycle / drone / pendulum / quadrotor)</div>
     </div>
   </div>
 </section>
@@ -389,7 +386,7 @@
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 2h9a2 2 0 0 1 2 2v12h-2V4H9V2Zm-4 4h9a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Zm0 2v12h9V8H5Z"/></svg>
         <span id="copyLbl">Copy</span>
       </button>
-<pre id="bibtex">@article{lee2026linearbilinear,
+<pre id="bibtex-code">@article{lee2026linearbilinear,
   title   = {Linear or Bilinear: A Criterion for Koopman Rollouts
              in Sampling-Based Predictive Control},
   author  = {Lee, Kangmin and Kim, Sanghyun},
@@ -421,7 +418,7 @@
 (function(){
   var btn=document.getElementById('copyBib'), lbl=document.getElementById('copyLbl');
   if(btn){btn.addEventListener('click',function(){
-    var t=document.getElementById('bibtex').innerText;
+    var t=document.getElementById('bibtex-code').innerText;
     navigator.clipboard.writeText(t).then(function(){
       lbl.textContent='Copied!';setTimeout(function(){lbl.textContent='Copy';},1600);
     });

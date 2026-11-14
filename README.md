@@ -12,9 +12,9 @@ The page is a single self-contained static site — no build step, no external C
 ```
 index.html                     # the whole page
 static/css/site.css            # bespoke stylesheet
-static/gifs/                   # animated results (unicycle parking, drone figure-8)
-static/plots/                  # result charts as SVG (drone / pendulum / quad / tube)
-static/images/figures/         # concept figure (Fig. 1) + social preview card
+static/gifs/                   # closed-loop demos: unicycle, drone figure-8, quadrotor, pendulum
+                               #   (oracle / linear / bilinear for each)
+static/images/figures/         # criterion figure (Fig. 1 panels + legend) + social preview card
 static/pdfs/paper.pdf          # the paper
 static/images/icon/            # favicon
 .nojekyll                      # serve static assets verbatim on GitHub Pages
@@ -25,13 +25,12 @@ static/images/icon/            # favicon
 Push to the repository and enable Pages on the branch root — everything is static,
 so it serves as-is.
 
-## Regenerating assets
+## Assets
 
-The animations and charts are rendered directly from the paper's experiment data
-(the same checkpoints that produced the published figures). The generator scripts live
-in `scripts/`; each reads an `*.npz` from the paper's `fig_data/` directory and writes to
-`static/gifs/` or `static/plots/`. That source data lives outside this repository and is
-not needed to serve the site — the finished GIFs and SVGs are already in `static/`.
+The demo GIFs are rendered from the closed-loop trajectories of the paper's experiments,
+with the same trained models and MPPI settings as the paper. The renderers and the
+trajectory data are kept with the experiment archive outside this repository; the
+finished GIFs are already in `static/`.
 
 ## Credits
 

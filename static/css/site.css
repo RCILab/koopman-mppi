@@ -211,6 +211,7 @@ table.tbl td .mono{font-family:var(--mono);font-size:13.5px}
 .badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px}
 .badge.need{background:#fdecec;color:#c13636}
 .badge.ok{background:#e9f7ef;color:#0f8a43}
+.badge.neutral{background:#f0f1f5;color:#5a6072}
 
 /* ---------- plots grid ---------- */
 .plots{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px}
@@ -289,6 +290,7 @@ table.tbl td .mono{font-family:var(--mono);font-size:13.5px}
 .grouplabel::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c,#999)}
 .grouplabel.need{background:#eef3ff;color:var(--brand-deep);--c:var(--brand)}
 .grouplabel.ok{background:#e9f7ef;color:#0f8a43;--c:var(--oracle)}
+.grouplabel.warn{background:#fdf3e1;color:#9a6200;--c:var(--amber)}
 .demogroup + .demoblock{border-top:none;padding-top:12px}
 
 /* command class on demo headings */

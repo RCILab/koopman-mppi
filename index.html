@@ -66,7 +66,7 @@
     </div>
 
     <div class="btns">
-      <a class="btn btn--primary" href="static/pdfs/paper.pdf?v=3" target="_blank" rel="noopener">
+      <a class="btn btn--primary" href="static/pdfs/paper.pdf?v=4" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm8 1.5V8h4.5L14 3.5ZM8 12h8v1.5H8V12Zm0 3.5h8V17H8v-1.5Z"/></svg>
         Paper (PDF)
       </a>
@@ -90,7 +90,7 @@
     <div class="prose">
       <p>Koopman operator models let sampling-based <strong>Model Predictive Path Integral (MPPI)</strong> control roll out thousands of sampled input sequences through an inexpensive learned lifted model. Recent Koopman MPPI controllers, however, keep a <strong>constant input matrix</strong>, which suits convex Koopman MPC but is not needed for sampling. It fixes a single gain from the input to the tracked output, yet for many robots the true gain changes with heading or attitude.</p>
       <p>This paper supplies a <strong>criterion</strong> for when the states a task visits rule out such a matrix. If the output is read linearly from the lifted state, the largest gap between the predicted and true gains over those states is at least half the true gain's variation. This holds for any lifting features and extends to every horizon step, but the criterion says nothing when the input moves the output only through acceleration or higher derivatives.</p>
-      <p>Where the gain varies strongly, as for a freely turning unicycle or a drone over a wide yaw range, linear rollouts fail. A <strong>bilinear</strong> rollout, whose input matrix instead depends on the lifted state, stays close to the true-model oracle in both tasks. Its MPPI update needs less than twice the time of a linear one. Where the gain varies little, the linear rollout is less accurate than the bilinear one in most of our tests but can remain within the task tolerance. Yet passing the criterion is not enough. In a pendulum swing-up without gain variation, linear models of matching width fail under every MPPI setting tested, while bilinear models succeed under most and the oracle under all. The cheaper linear rollout is therefore worth trying at small gain variation, but a <strong>closed-loop test</strong> must still confirm that it works for a given task.</p>
+      <p>Where the gain varies strongly, as for a freely turning unicycle or a drone over a wide yaw range, linear rollouts fail. A <strong>bilinear</strong> rollout, whose input matrix instead depends on the lifted state, stays close to the true-model oracle in both tasks. Its MPPI update needs less than twice the time of a linear one. Where the gain varies little, the linear rollout is less accurate than the bilinear one in most of our tests but can remain within the task tolerance. Yet passing the criterion is not enough. In a pendulum swing-up, linear models of matching width fail at long horizons even for outputs with a constant one-step input gain, while bilinear models with the same outputs can succeed. The cheaper linear rollout is therefore worth trying at small gain variation, but a <strong>closed-loop test</strong> must still confirm that it works for a given task.</p>
     </div>
 
   </div>
@@ -143,22 +143,35 @@
       </div>
     </div>
 
-    <div class="demogroup"><span class="grouplabel warn">Not ruled out, yet linear fails at matching width</span></div>
+    <div class="demogroup"><span class="grouplabel warn">Not ruled out, yet linear of matching width fails at long horizons</span></div>
 
-    <!-- Pendulum (torque) -->
+    <!-- Pendulum (torque), angle-output models: the same trained models, only the swing-up horizon differs -->
     <div class="demoblock reveal">
       <div class="demoblock__head">
-        <h3>Torque-limited pendulum, swing-up and hold <span class="cmd">torque command</span></h3>
+        <h3>Torque-limited pendulum, 15-step swing-up horizon <span class="cmd">torque command</span></h3>
+        <p>Both learned models predict the angle itself, as in Hao et al., so the one-step input gain of their output is constant. Both swing the pendulum up and hold it.</p>
       </div>
       <div class="triptych">
-        <div class="tri"><img src="static/gifs/fig_pend_oracle.gif?v=3" alt="Pendulum swing-up and hold, oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
-        <div class="tri"><img src="static/gifs/fig_pend_linear.gif?v=3" alt="Pendulum swing-up and hold, linear" loading="lazy"><div class="tri__lab linear">Linear</div></div>
-        <div class="tri"><img src="static/gifs/fig_pend_bilinear.gif?v=3" alt="Pendulum swing-up and hold, bilinear" loading="lazy"><div class="tri__lab ours">Bilinear</div></div>
+        <div class="tri"><img src="static/gifs/fig_pend15_oracle.gif?v=1" alt="Pendulum, 15-step swing-up horizon, oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
+        <div class="tri"><img src="static/gifs/fig_pend15_linear.gif?v=1" alt="Pendulum, 15-step swing-up horizon, linear" loading="lazy"><div class="tri__lab linear">Linear</div></div>
+        <div class="tri"><img src="static/gifs/fig_pend15_bilinear.gif?v=1" alt="Pendulum, 15-step swing-up horizon, bilinear" loading="lazy"><div class="tri__lab ours">Bilinear</div></div>
+      </div>
+    </div>
+
+    <div class="demoblock reveal">
+      <div class="demoblock__head">
+        <h3>Torque-limited pendulum, 30-step swing-up horizon <span class="cmd">torque command</span></h3>
+        <p>The same trained models, with only the swing-up horizon lengthened to 30 steps. The linear model no longer swings the pendulum up, while the bilinear one still does. In both settings, all five models of each class behave alike.</p>
+      </div>
+      <div class="triptych">
+        <div class="tri"><img src="static/gifs/fig_pend30_oracle.gif?v=1" alt="Pendulum, 30-step swing-up horizon, oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
+        <div class="tri"><img src="static/gifs/fig_pend30_linear.gif?v=1" alt="Pendulum, 30-step swing-up horizon, linear" loading="lazy"><div class="tri__lab linear">Linear</div></div>
+        <div class="tri"><img src="static/gifs/fig_pend30_bilinear.gif?v=1" alt="Pendulum, 30-step swing-up horizon, bilinear" loading="lazy"><div class="tri__lab ours">Bilinear</div></div>
       </div>
     </div>
 
     <div class="structnote reveal">
-      <b>The criterion is a necessary condition.</b> When the input gain varies strongly over the visited states, no constant input matrix can match it under a linear readout, whatever the lifting features, and a larger linear lift does not help. When the gain varies little, the linear rollout is not ruled out and can meet the task tolerance, as in the graded drone study. The pendulum shows that passing the test is not enough, so a closed-loop test decides.
+      <b>The criterion is a necessary condition.</b> When the input gain varies strongly over the visited states, no constant input matrix can match it under a linear readout, whatever the lifting features, and a larger linear lift does not help. When the gain varies little, the linear rollout is not ruled out and can meet the task tolerance, as in the graded drone study. The pendulum shows that passing the test is not enough, even for an output with a constant one-step gain, so a closed-loop test decides.
     </div>
   </div>
 </section>
@@ -172,7 +185,7 @@
     <ol class="contriblist reveal" style="margin-top:30px">
       <li><b>A necessary condition for a constant input matrix.</b> With a linear readout, a linear lifted model has one input gain everywhere. Over the states a task visits, its worst-case gain error is then at least half the gain variation <span class="mv">ν<sub>Φ</sub></span>, at every horizon step and for any dictionary.</li>
       <li><b>Where the criterion rules linear out.</b> On the unicycle and on a drone with a wide yaw range, linear rollouts fail, while the bilinear one stays near the oracle and needs less than twice the linear MPPI update time. A graded drone study shows that the point of failure depends on the tolerance.</li>
-      <li><b>Where it does not, and its limit.</b> At small variation, the cheaper linear model can meet the tolerance, though the bilinear one is usually more accurate. Passing the test is still not enough. In a pendulum swing-up, linear models fail in all 16 MPPI settings tested, while bilinear models of the same width succeed in 14 and the oracle in all 16. Swapping model components traces the failure to the linear input response.</li>
+      <li><b>Where it does not, and its limit.</b> At small variation, the cheaper linear model can meet the tolerance, though the bilinear one is usually more accurate. On a torque-driven arm, the linear error stays small for the joint angles but grows with the one-step gain variation for the end effector. Passing the test is still not enough. In a pendulum swing-up with a horizon of 30 steps or more, bilinear models can succeed, whereas linear models of the same width fail in every tested setting, even when they predict the angle itself, whose one-step gain is constant.</li>
     </ol>
   </div>
 </section>
@@ -296,7 +309,7 @@
         </tbody>
       </table>
     </div>
-    <p class="tblnote">Closed-loop entries: success rate over 250 trials per controller (unicycle), mean tracking error over 60 episodes (drone), trials that come within 0.12 m of the goal (quadrotor), and MPPI settings in which the class succeeds, with both learned classes at width 64 (pendulum). On the quadrotor, the bilinear model reaches the goal more often for only three of five data sets, and the gap is not attributed to a state-dependent gain. On the pendulum, wider linear models (width 256) succeed in the four settings with a 65-step swing-up horizon. "Second order" means the input reaches the output only through acceleration, so the criterion is silent for it.</p>
+    <p class="tblnote">Closed-loop entries: success rate over 250 trials per controller (unicycle), mean tracking error over 60 episodes (drone), trials that come within 0.12 m of the goal (quadrotor), and MPPI settings in which the class succeeds, with both learned classes at width 64 (pendulum). On the quadrotor, the bilinear model reaches the goal more often for only three of five data sets, and the gap is not attributed to a state-dependent gain. The pendulum counts use the observables of Table 1 (sine and cosine of the angle), and wider linear models (width 256) succeed in the four settings with a 65-step swing-up horizon. With angle outputs, all five linear models succeed at a 15-step swing-up horizon, but at most two do at 20 steps, and the linear models fail in every setting from 30 steps on. Bilinear models with the same outputs fail at 65 steps, but at least four of five succeed at 20 steps and in the four clamped settings with 30 or 45 steps. "Second order" means the input reaches the output only through acceleration, so the criterion is silent for it.</p>
 
     <!-- graded study -->
     <h3 style="font-size:20px;margin:48px 0 8px;text-align:center">Graded gain variation</h3>

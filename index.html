@@ -66,7 +66,7 @@
     </div>
 
     <div class="btns">
-      <a class="btn btn--primary" href="static/pdfs/paper.pdf?v=4" target="_blank" rel="noopener">
+      <a class="btn btn--primary" href="static/pdfs/paper.pdf?v=5" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm8 1.5V8h4.5L14 3.5ZM8 12h8v1.5H8V12Zm0 3.5h8V17H8v-1.5Z"/></svg>
         Paper (PDF)
       </a>
@@ -137,9 +137,9 @@
         <h3>Thrust-driven quadrotor, fly-to-goal <span class="cmd">thrust command</span></h3>
       </div>
       <div class="triptych">
-        <div class="tri"><img src="static/gifs/fig_quad_oracle.gif?v=4" alt="Quadrotor fly-to-goal, oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
-        <div class="tri"><img src="static/gifs/fig_quad_linear.gif?v=4" alt="Quadrotor fly-to-goal, linear" loading="lazy"><div class="tri__lab linear">Linear</div></div>
-        <div class="tri"><img src="static/gifs/fig_quad_bilinear.gif?v=4" alt="Quadrotor fly-to-goal, bilinear" loading="lazy"><div class="tri__lab ours">Bilinear</div></div>
+        <div class="tri"><img src="static/gifs/fig_quad_oracle.gif?v=5" alt="Quadrotor fly-to-goal, oracle" loading="lazy"><div class="tri__lab oracle">Oracle</div></div>
+        <div class="tri"><img src="static/gifs/fig_quad_linear.gif?v=5" alt="Quadrotor fly-to-goal, linear" loading="lazy"><div class="tri__lab linear">Linear</div></div>
+        <div class="tri"><img src="static/gifs/fig_quad_bilinear.gif?v=5" alt="Quadrotor fly-to-goal, bilinear" loading="lazy"><div class="tri__lab ours">Bilinear</div></div>
       </div>
     </div>
 
@@ -288,7 +288,7 @@
           <tr>
             <td class="sys">Quadrotor<span class="syssub">thrust command</span></td>
             <td>position: second order<br>velocity: 0.27</td>
-            <td><span class="val o">20</span> of 20 / <span class="val l">34</span> of 60 / <span class="val b">50</span> of 60 &nbsp;reach 0.12 m</td>
+            <td><span class="val o">20</span> of 20 / <span class="val l">20</span> of 60 / <span class="val b">54</span> of 60 &nbsp;stay within 0.12 m</td>
             <td>depends on channel and horizon</td>
             <td><span class="badge ok">not ruled out</span></td>
           </tr>
@@ -309,7 +309,7 @@
         </tbody>
       </table>
     </div>
-    <p class="tblnote">Closed-loop entries: success rate over 250 trials per controller (unicycle), mean tracking error over 60 episodes (drone), trials that come within 0.12 m of the goal (quadrotor), and MPPI settings in which the class succeeds, with both learned classes at width 64 (pendulum). On the quadrotor, the bilinear model reaches the goal more often for only three of five data sets, and the gap is not attributed to a state-dependent gain. The pendulum counts use the observables of Table 1 (sine and cosine of the angle), and wider linear models (width 256) succeed in the four settings with a 65-step swing-up horizon. With angle outputs, all five linear models succeed at a 15-step swing-up horizon, but at most two do at 20 steps, and the linear models fail in every setting from 30 steps on. Bilinear models with the same outputs fail at 65 steps, but at least four of five succeed at 20 steps and in the four clamped settings with 30 or 45 steps. "Second order" means the input reaches the output only through acceleration, so the criterion is silent for it.</p>
+    <p class="tblnote">Closed-loop entries: success rate over 250 trials per controller (unicycle), mean tracking error over 60 episodes (drone), trials that stay within 0.12 m of the goal over the last 2 s of a 10 s flight (quadrotor), and MPPI settings in which the class succeeds, with both learned classes at width 64 (pendulum). On the quadrotor, the bilinear model succeeds more often for all five data sets, and the gap is not attributed to a state-dependent gain. The pendulum counts use the observables of Table 1 (sine and cosine of the angle), and wider linear models (width 256) succeed in the four settings with a 65-step swing-up horizon. With angle outputs, all five linear models succeed at a 15-step swing-up horizon, but at most two do at 20 steps, and the linear models fail in every setting from 30 steps on. Bilinear models with the same outputs fail at 65 steps, but at least four of five succeed at 20 steps and in the four clamped settings with 30 or 45 steps. "Second order" means the input reaches the output only through acceleration, so the criterion is silent for it.</p>
 
     <!-- graded study -->
     <h3 style="font-size:20px;margin:48px 0 8px;text-align:center">Graded gain variation</h3>
@@ -382,7 +382,7 @@
 
     <div class="paramnote">
       <div class="pn"><b>Simulators.</b> Unicycle &amp; drone kinematic · pendulum analytical · quadrotor &amp; torque arm in MuJoCo</div>
-      <div class="pn"><b>Protocol.</b> Unicycle 250 trials per controller · drone 60 episodes · quadrotor 60 trials (oracle 20) · pendulum 16 MPPI settings, 10 trials per model</div>
+      <div class="pn"><b>Protocol.</b> Unicycle 250 trials per controller · drone 60 episodes · quadrotor 60 trials of 10 s (oracle 20) · pendulum 16 MPPI settings, 10 trials per model</div>
       <div class="pn"><b>Rollout cost.</b> m+1 matrix–vector products per step vs. 1 for linear</div>
       <div class="pn"><b>Timing (one CPU thread).</b> One bilinear MPPI update takes 4.9 / 2.4 / 5.8 / 6.4 ms vs. 3.5 / 1.3 / 4.1 / 3.6 ms for linear (unicycle / drone / pendulum / quadrotor)</div>
     </div>

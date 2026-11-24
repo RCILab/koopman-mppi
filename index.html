@@ -66,7 +66,7 @@
     </div>
 
     <div class="btns">
-      <a class="btn btn--primary" href="static/pdfs/paper.pdf?v=14" target="_blank" rel="noopener">
+      <a class="btn btn--primary" href="static/pdfs/paper.pdf?v=15" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Zm8 1.5V8h4.5L14 3.5ZM8 12h8v1.5H8V12Zm0 3.5h8V17H8v-1.5Z"/></svg>
         Paper (PDF)
       </a>
@@ -89,7 +89,7 @@
     <h2 style="margin-bottom:24px">A constant input matrix, and a criterion</h2>
     <div class="prose">
       <p>Koopman operator models enable sampling-based <strong>Model Predictive Path Integral (MPPI)</strong> control to roll out thousands of sampled input sequences through a low-cost learned lifted model. However, recent Koopman MPPI controllers keep a <strong>constant input matrix</strong>, which is suitable for convex Koopman MPC, but not needed for sampling. It fixes a single gain from input to tracked output, yet for many robots the true gain varies with heading or attitude.</p>
-      <p>This paper supplies a <strong>criterion</strong> for when the states a task visits rule out such a matrix. If the output is read linearly from the lifted state, the largest gap between the predicted and true gains over those states is at least half the true gain's variation. This holds for any lifting features and every horizon step, but the criterion says nothing if the input moves the output only by acceleration or higher derivatives.</p>
+      <p>This paper supplies a <strong>criterion</strong> for when the states a task visits rule out such a matrix. If the output is read linearly from the lifted state, the largest gap between the predicted and true gains over those states is at least half the true gain's variation. This holds for any lifting features and every horizon step, but the criterion says nothing if the input moves the output only through acceleration or higher derivatives.</p>
       <p>Where the gain varies strongly, as for a freely turning unicycle or a drone over a wide yaw range, linear rollouts fail. A <strong>bilinear</strong> rollout, where the input matrix instead depends on the lifted state, stays close to the true-model oracle. Its MPPI update costs under twice the time of a linear update. Where the gain varies little, the linear rollout is less accurate than the bilinear one in most tests but can remain within the task tolerance. Yet passing the criterion is not enough. In a pendulum swing-up, linear models of matching width fail at long horizons even for outputs with a constant one-step input gain, while bilinear models with the same outputs can succeed. The cheaper linear rollout is therefore worth trying at small gain variation, but a <strong>closed-loop test</strong> is still needed to confirm it works for a given task.</p>
     </div>
 
